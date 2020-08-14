@@ -9,8 +9,12 @@
 #include <algorithm>
 #include <sstream>
 
+#include "node.h"
 #include "list_node.h"
 #include "tree_node.h"
+
+#define ROOT_TO_LEAF false
+
 class Solution
 {
 public:
@@ -18,6 +22,7 @@ public:
     static std::vector<std::vector<int>> reconstructQueue(std::vector<std::vector<int>>& people);
     static int change(int amount, std::vector<int> coins);
     static bool isPowerOfTwo(int n);
+    static bool isPowerOfFour(int num);
     static bool isSubsequence(std::string s, std::string t);
     static void sortColors(std::vector<int>& nums);
     static std::vector<int> largestDivisibleSubset(std::vector<int>& nums);
@@ -80,6 +85,35 @@ public:
     static int minSwaps(std::vector<std::vector<int>>& grid);
     static int maxSum(std::vector<int>& nums1, std::vector<int>& nums2);
     static bool isPalindrome(std::string s);
+    static int rob(std::vector<int> nums);
+    static int rob(TreeNode* root);
+    static int diameterOfBinaryTree(TreeNode* root);
+    static std::vector<int> findDuplicates(std::vector<int>& nums);
+    static std::vector<int> findDisappearedNumbers(std::vector<int>& nums);
+    static std::vector<std::vector<int>> verticalOrder(TreeNode* root);
+    static std::vector<std::vector<int>> verticalTraversal(TreeNode* root);
+    static std::vector<int> inorderTraversal(TreeNode* root);
+    static void recoverTree(TreeNode* root);
+    static bool hasPathSum(TreeNode* root, int sum); 
+#if ROOT_TO_LEAF
+    std::vector<std::vector<int>> pathSum(TreeNode* root, int sum);
+#else
+    static int pathSum(TreeNode* root, int sum);
+#endif
+    static int closestValue(TreeNode* root, double target);
+    static int orangesRotting(std::vector<std::vector<int>>& grid);
+    static int titleToNumber(std::string s);
+    static int countBinarySubstrings(std::string s);
+    static std::string makeGood(std::string s);
+    static char findKthBit(int n, int k);
+    static int maxNonOverlapping(std::vector<int>& nums, int target);
+    static std::vector<std::vector<int>> generate(int numRows);
+    static std::vector<int> getRow(int rowIndex);
+    static Node* cloneGraph(Node* node);
+    static ListNode* addTwoNumbers(ListNode* l1, ListNode* l2);
+    static std::string addStrings(std::string num1, std::string num2);
+    static std::string multiply(std::string num1, std::string num2);
+    static bool isValid(std::string s);
+    static int longestPalindrome(std::string s);
 private:
-
 };

@@ -41,5 +41,11 @@
     <ClInclude Include="src\list_node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\y_combinator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

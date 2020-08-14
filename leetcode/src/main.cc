@@ -143,7 +143,6 @@ int main()
         ListNode e(3, &f);
         ListNode d(1, &e);
         Solution::mergeTwoLists(&a, &d);
-
     }
     {
         Logger logger;
@@ -175,7 +174,80 @@ int main()
         std::vector<int> arr = { 3, 0, 1, 1, 9, 7 };
         Solution::countGoodTriplets(arr, 7, 2, 3);
     }
+    {
+        std::vector<int> nums = { 2, 3 };
+        Solution::rob(nums);
+    }
+    {
+        std::vector<int> nums = { 4,3,2,7,8,2,3,1 };
+        Solution::findDuplicates(nums);
+    }
+    {
+        TreeNode c(2);
+        TreeNode b(3, nullptr, &c);
+        TreeNode a(1, &b, nullptr);
+        Solution::recoverTree(&a);
+    }
+    {
+        TreeNode test[9];
+        test[0].val = 10;
+        test[1].val = 5;;
+        test[2].val = -3;
+        test[3].val = 3;
+        test[4].val = 2;
+        test[5].val = 11;
+        test[6].val = 3;
+        test[7].val = -2;
+        test[8].val = 1;
+        test[0].left = &test[1];
+        test[0].right = &test[2];
+        test[1].left = &test[3];
+        test[1].right = &test[4];
+        test[2].right = &test[5];
+        test[3].left = &test[6];
+        test[3].right = &test[7];
+        test[4].right = &test[8];
+
+        Solution::pathSum(&test[0],8);
+    }
+    {
+        std::vector<std::vector<int>> grid;
+        grid.push_back({2, 1, 1});
+        grid.push_back({1, 1, 0});
+        grid.push_back({0, 1, 1});
+        Solution::orangesRotting(grid);
+        grid.clear();
+        grid.push_back({ 2, 1, 1 });
+        grid.push_back({ 1, 1, 0 });
+        grid.push_back({ 1, 0, 1 });
+        Solution::orangesRotting(grid);
+    }
+    {
+        std::vector<int> citations = { 3, 0, 6, 1, 5 };
+        Solution::hIndex(citations);
+    }
+    { 
+        Node node_1st = Node(1);
+        Node node_2st = Node(2);
+        Node node_3st = Node(3);
+        Node node_4st = Node(4);
+        node_1st.neighbors = { &node_2st, &node_4st };
+        node_2st.neighbors = { &node_1st, &node_3st };
+        node_3st.neighbors = { &node_2st, &node_4st };
+        node_4st.neighbors = { &node_1st, &node_3st };
+        Node* newnode = Solution::cloneGraph(&node_1st);
+    }
+    Solution::addStrings("0", "0");
+    Solution::isValid("()");
+    CombinationIterator* iterator = new CombinationIterator("abc", 2);
+    std::cout << iterator->hasNext() << std::endl;
+    std::cout << iterator->next() << std::endl;
+    std::cout << iterator->hasNext() << std::endl;
+    std::cout << iterator->next() << std::endl;
+    std::cout << iterator->hasNext() << std::endl;
+    std::cout << iterator->next() << std::endl;
     Solution::isPalindrome("A man, a plan, a canal: Panama");
+    Solution::isPowerOfFour(16);
     Solution::integerBreak(10);
     Solution::detectCapitalUse("Google");
     std::vector<int> nums = { 2, 0, 2, 1, 1, 0 };

@@ -1,4 +1,7 @@
 #include "solution.h"
+#include <queue>
+
+#include "y_combinator.h"
 
 int Solution::twoCitySchedCost(std::vector<std::vector<int>>& costs)
 {
@@ -98,9 +101,22 @@ bool Solution::isPowerOfTwo(int n)
     return (1 << bits) == n;
 }
 
+bool Solution::isPowerOfFour(int num)
+{
+    return num > 0 && (num & (num - 1)) == 0 and (num & 0xaaaaaaaa) == 0;
+    if (num < 0) return false;
+    int count[2] = { 0 };
+    while (num)
+    {
+        count[num & 0x1]++;
+        num >>= 1;
+    }
+    return count[1] == 1 && count[0] % 2 == 0;
+}
+
 bool Solution::isSubsequence(std::string s, std::string t)
 {
-    s = "abc", t = "ahbgdc";
+    if (t.length() < s.length()) return false;
     for (auto it = s.rbegin(); it != s.rend(); it++)
     {
         for (int i = t.length() - 1; i >= 0; i--)
@@ -113,11 +129,6 @@ bool Solution::isSubsequence(std::string s, std::string t)
             if (0 == i)
                 return false;
         }
-        //auto k = std::find(t.begin(),t.end(),*it);
-        ////t.reserve();
-        //if (t.find(*it) == -1)
-        //    return false;
-        //t.erase(t.reserve().find(*it));
     }
     return true;
 }
@@ -159,6 +170,7 @@ int Solution::findCheapestPrice(int n, std::vector<std::vector<int>>& flights, i
     return res;
 }
 
+// TODO:
 std::string Solution::validIPAddress(std::string IP)
 {
     enum IPAddressType
@@ -182,26 +194,44 @@ std::string Solution::validIPAddress(std::string IP)
 
     return strIPAddressType[IPAddressType::Neither];
 }
-
 void Solution::solve(std::vector<std::vector<char>>& board)
 {
+    auto dfs = make_y_combinator([](auto&& dfs, int row,int column, std::vector<std::vector<char>> grid) {
+        if (row < 0 || row >= grid.size() || column < 0 || column >= grid[0].size() || grid[row][column] != 'O')
+            return;
+        grid[row][column] -= 9;
+        dfs(row - 1, column, grid);
+        dfs(row + 1, column, grid);
+        dfs(row, column - 1, grid);
+        dfs(row, column + 1, grid);
+    });
+    for (size_t i = 0; i < board.size(); i++)
+        for (size_t j = 0; j < board[0].size(); j++)
+            if (i == 0 || i == board.size() - 1 || j == 0 || j == board[0].size() - 1)
+                if (board[i][j] == 'O')
+                    dfs(i, j, board);
+
+    for (size_t i = 0; i < board.size(); i++)
+        for (size_t j = 0; j < board[0].size(); j++)
+            board[i][j] += 9;
 }
 
-// TODO:
 int Solution::hIndex(std::vector<int>& citations)
 {
-    int N = citations.size();
-    int left = 0, right = N;
-    int res = (left + right) / 2;
+    // sort
+    std::sort(citations.begin(), citations.end(),std::greater<int>());
+
+    // binary search
+    int left = 0, right = citations.size();
     while (left < right)
     {
-        if (citations[res - 1] < res)
-            left = res;
-        if (res <= citations[res - 1])
-            right = res;
-        res = (left + right) / 2;
+        auto mid = left + (right - left) / 2;
+        if (mid + 1 - citations[mid] <= 0)
+            left = mid + 1;
+        else
+            right = mid;
     }
-    return res;
+    return left;
 }
 
 std::string Solution::longestDupSubstring(std::string S)
@@ -236,6 +266,7 @@ int Solution::calculateMinimumHP(std::vector<std::vector<int>>& dungeon)
     return 0;
 }
 
+// TODO:
 int Solution::singleNumber(std::vector<int>& nums)
 {
     int temps[2] = { 0 };
@@ -798,7 +829,7 @@ std::vector<int> Solution::sortedSquares(std::vector<int>& A)
 
 ListNode* Solution::mergeTwoLists(ListNode* l1, ListNode* l2)
 {
-#if recursive
+#if recursion
     if (!l1)
         return l2;
     if (!l2)
@@ -955,18 +986,10 @@ int Solution::countGoodTriplets(std::vector<int>& arr, int a, int b, int c)
     //std::sort(arr.begin(), arr.end());
     int count = 0;
     for (size_t i = 0; i < arr.size() - 2; i++)
-    {
         for (size_t j = i + 1; j < arr.size() - 1; j++)
-        {
             for (size_t k = j + 1; k < arr.size(); k++)
-            {
                 if ((arr[i] - arr[j] <= a) && (-a <= arr[i] - arr[j]) && (arr[j] - arr[k] <= b) && (-b <= arr[j] - arr[k]) && (arr[i] - arr[k] <= c) && (-c <= arr[i] - arr[k]))
-                {
                     count++;
-                }
-            }
-        }
-    }
     return count;
 }
 
@@ -1075,4 +1098,511 @@ bool Solution::isPalindrome(std::string s)
         }
     }
     return true;
+}
+
+int Solution::rob(std::vector<int> nums)
+{
+#if false
+    // House Robber I
+    if (nums.empty())
+        return 0;
+    if (1 == nums.size())
+        return nums[0];
+    std::vector<int> dp(nums.size(), 0);
+    dp[0] = nums[0];
+    dp[1] = std::max(nums[0], nums[1]);
+    for (size_t i = 2; i < nums.size(); i++)
+    {
+        dp[i] = std::max(dp[i - 2] + nums[i], dp[i - 1]);
+    }
+    return dp.back();
+#else
+    // House Robber II
+    if (nums.empty())
+        return 0;
+    if (1 == nums.size())
+        return nums[0];
+    if (2 == nums.size())
+        return std::max(nums[0], nums[1]);
+    std::vector<std::vector<int>> dp(nums.size() - 1, { 0, 0 });
+    std::vector<int> dp2(nums.size() - 1, 0);
+    dp[0][0] = nums[0];
+    dp[1][0] = std::max(nums[0], nums[1]);
+    dp[0][1] = nums[1];
+    dp[1][1] = std::max(nums[1], nums[2]);
+    for (size_t i = 2; i < nums.size() - 1; i++)
+    {
+        dp[i][0] = std::max(dp[i - 2][0] + nums[i], dp[i - 1][0]);
+        dp[i][1] = std::max(dp[i - 2][1] + nums[i + 1], dp[i - 1][1]);
+    }
+    return std::max(dp.back().at(0), dp.back().back());
+#endif
+}
+int Solution::rob(TreeNode* root)
+{
+    static std::unordered_map<TreeNode*, int> robmap;
+    if (!root) return 0;
+    if (robmap[root]) return robmap[root];
+    int res = root->val;
+    if (root->left)
+        res += rob(root->left->left) + rob(root->left->right);
+    if (root->right)
+        res += rob(root->right->left) + rob(root->right->right);
+    res = std::max(res, rob(root->left) + rob(root->right));
+    robmap[root] = res;
+    return res;
+    return 0;
+}
+
+int Solution::diameterOfBinaryTree(TreeNode* root)
+{
+    return 0;
+}
+
+std::vector<int> Solution::findDuplicates(std::vector<int>& nums)
+{
+    std::vector<int> res;
+    for (size_t i = 0; i < nums.size(); i++)
+    {
+        size_t index = 0 < nums[i] ? nums[i] - 1 : -nums[i] - 1;
+        if (nums[index] < 0)
+            res.push_back(index + 1);
+        nums[index] *= -1;
+    }
+    return res;
+}
+
+std::vector<int> Solution::findDisappearedNumbers(std::vector<int>& nums)
+{
+    std::vector<int> res;
+    for (size_t i = 0; i < nums.size(); i++)
+    {
+        size_t index = 0 < nums[i] ? nums[i] - 1 : -nums[i] - 1;
+        if (nums[index] > 0)
+            nums[index] *= -1;
+    }
+    for (size_t i = 0; i < nums.size(); i++)
+    {
+        if (0 < nums[i])
+            res.push_back(i + 1);
+    }
+    return res;
+}
+
+std::vector<std::vector<int>> Solution::verticalOrder(TreeNode* root)
+{
+    std::vector<std::vector<int>> res;
+    std::queue<std::pair<TreeNode*, int>> q;
+    std::map<int, std::vector<int>> map;
+    q.push(std::make_pair(root, 0));
+    while (!q.empty())
+    {
+        auto node = q.front().first;
+        auto x = q.front().second;
+        auto val = node->val;
+        if (0 == map.count(x))
+            map[x] = std::vector<int>();
+        map[x].push_back(node->val);
+        q.pop();
+        if (node->left)
+            q.push(std::make_pair(node->left,x-1));
+        if (node->right)
+            q.push(std::make_pair(node->right,x+1));
+    }
+    for (auto e:map)
+    {
+        res.push_back(e.second);
+    }
+    return res;
+}
+
+std::vector<std::vector<int>> Solution::verticalTraversal(TreeNode* root)
+{
+    std::vector<std::vector<int>> res;
+    std::queue<std::pair<TreeNode*, std::pair<int,int>>> q;
+    std::map<int, std::vector<std::pair<int,int>>> map;
+    q.push(std::make_pair(root, std::make_pair(0, 0)));
+    while (!q.empty())
+    {
+        auto node = q.front().first;
+        auto x = q.front().second.first;
+        auto y = q.front().second.second;
+        auto val = node->val;
+        if (0 == map.count(x))
+            map[x] = std::vector<std::pair<int, int>>();
+        map[x].push_back(std::make_pair(node->val,y));
+        q.pop();
+        if (node->left)
+            q.push(std::make_pair(node->left, std::make_pair(x - 1, y + 1)));
+        if (node->right)
+            q.push(std::make_pair(node->right, std::make_pair(x + 1, y + 1)));
+    }
+    for (auto& e : map)
+        std::sort(e.second.begin(), e.second.end(), [](std::pair<int, int> A, std::pair<int, int> B) {
+            if (A.second != B.second) return A.second < B.second; return A.first < B.first;
+            });
+    for (auto& e : map)
+    {
+        std::vector<int> temp;
+        for (auto& pair : e.second)
+            temp.push_back(pair.first);
+        res.push_back(temp);
+    }
+    return res;
+}
+
+std::vector<int> Solution::inorderTraversal(TreeNode* root)
+{
+    std::vector<int> res;
+    TreeNode* predecessor = nullptr;
+    TreeNode* curr = root;
+    while (curr)
+    {
+        if (!curr->left)
+        {
+            res.push_back(curr->val);
+            curr = curr->right;
+        }
+        else
+        {
+            predecessor = curr->left;
+            while (predecessor->right && predecessor->right != curr)
+                predecessor = predecessor->right;
+            if (!predecessor->right) 
+            {
+                predecessor->right = curr;
+                res.push_back(curr->val);
+                curr = curr->left;
+            }
+            else
+            {
+                predecessor->right = nullptr;
+                res.push_back(curr->val);
+                curr = curr->right;
+            }
+        }
+    }
+    return res;
+}
+
+void Solution::recoverTree(TreeNode* root)
+{
+    TreeNode* x = nullptr;
+    TreeNode* y = nullptr;
+    TreeNode* prev = nullptr;
+    TreeNode* curr = root;
+    std::stack<TreeNode*> s;
+    while (true)
+    {
+        while (curr)
+        {
+            s.push(curr);
+            curr = curr->left;
+        }
+        if (s.empty())
+            break;
+        curr = s.top();
+        s.pop();
+        if (prev && curr->val < prev->val) {
+            y = curr;
+            if (!x)
+                x = prev;
+            else
+                break;
+        }
+        prev = curr;
+        curr = curr->right;
+    }
+    int temp = x->val;
+    x->val = y->val;
+    y->val = temp;
+}
+
+bool Solution::hasPathSum(TreeNode* root, int sum)
+{
+    bool left_has_path_sum = false, right_has_path_sum = false, curr = false;
+    if (root)
+    {
+        if (!root->left && !root->right) curr = (sum == root->val);
+        if (root->left)
+            left_has_path_sum = hasPathSum(root->left, sum - root->val);
+        if (root->right)
+            right_has_path_sum = hasPathSum(root->right, sum - root->val);
+    }
+    return curr || left_has_path_sum || right_has_path_sum;
+}
+#if ROOT_TO_LEAF
+std::vector<std::vector<int>> Solution::pathSum(TreeNode* root, int sum)
+{
+    std::vector<std::vector<int>> res;
+    return res;
+}
+#else
+// TODO:
+int Solution::pathSum(TreeNode* root, int sum)
+{
+    static int first = sum;
+    int left_path_sum = 0, right_path_sum = 0, curr = 0;
+    if (root) {
+        curr = sum == root->val ? 1 : 0;
+        if (sum == first) {
+            if (root->left)
+                left_path_sum = pathSum(root->left, sum - root->val) + pathSum(root->left, sum);
+            if (root->right)
+                right_path_sum = pathSum(root->right, sum - root->val) + pathSum(root->right, sum);
+        }
+        else {
+            if (root->left)
+                left_path_sum = pathSum(root->left, sum - root->val);
+            if (root->right)
+                right_path_sum = pathSum(root->right, sum - root->val);
+        }
+    }
+    if (root && root->val == 10)
+        auto k = 0;
+    if (root && root->val == 5)
+        auto k = 0;
+    if (root && root->val == 3)
+        auto k = 0;
+    return left_path_sum + right_path_sum + curr;
+}
+#endif // From root to leaf
+
+int Solution::closestValue(TreeNode* root, double target)
+{
+    return 0;
+}
+
+int Solution::orangesRotting(std::vector<std::vector<int>>& grid)
+{
+    std::queue<std::pair<size_t, size_t>> q;
+    for (size_t row = 0; row < grid.size(); row++)
+        for (size_t column = 0; column < grid[0].size(); column++)
+            if (grid[row][column] == 2)
+                q.push(std::make_pair(row, column));
+    unsigned size = 0;
+    int rot_times = -1;
+    while (q.size() != size)
+    {
+        rot_times++;
+        size = q.size();
+        while (!q.empty())
+        {
+            auto rotted_coord = q.front();
+            q.pop();
+            // rot q. 4 dirs
+            std::vector<std::pair<size_t, size_t>> rotting_coords;
+            if (0 < rotted_coord.first) rotting_coords.push_back(std::make_pair(rotted_coord.first - 1, rotted_coord.second));
+            if (rotted_coord.first + 1 < grid.size()) rotting_coords.push_back(std::make_pair(rotted_coord.first + 1, rotted_coord.second));
+            if (0 < rotted_coord.second) rotting_coords.push_back(std::make_pair(rotted_coord.first, rotted_coord.second - 1));
+            if (rotted_coord.second + 1 < grid[0].size()) rotting_coords.push_back(std::make_pair(rotted_coord.first, rotted_coord.second + 1));
+            for (auto coord : rotting_coords)
+                if (1 == grid[coord.first][coord.second])
+                    grid[coord.first][coord.second] = 2;
+        }
+        for (size_t row = 0; row < grid.size(); row++)
+            for (size_t column = 0; column < grid[0].size(); column++)
+                if (grid[row][column] == 2)
+                    q.push(std::make_pair(row, column));
+    }
+    for (size_t row = 0; row < grid.size(); row++)
+        for (size_t column = 0; column < grid[0].size(); column++)
+            if (grid[row][column] == 1)
+                return -1;
+    return rot_times;
+}
+
+int Solution::titleToNumber(std::string s)
+{
+    int res = 0;
+    for (const auto& chr : s)
+    {
+        res *= 26;
+        res += chr - 'A';
+    }
+    return res;
+}
+
+int Solution::countBinarySubstrings(std::string s)
+{
+    return 0;
+}
+
+std::string Solution::makeGood(std::string s)
+{
+    bool is_great = false;
+    while (!is_great)
+    {
+        is_great = true;
+        for (int i = s.length() - 2; i >= 0; i--)
+            if (tolower(s[i]) == tolower(s[i + 1]) && s[i] != s[i + 1])
+            {
+                s.erase(s.begin() + i, s.begin() + i + 2);
+                is_great = false;
+                break;
+            }
+    }
+    return s;
+}
+
+char Solution::findKthBit(int n, int k)
+{
+    int length = (1 << n) - 1;
+    if (k == 1)
+        return '0';
+    if (length / 2 + 1 == k)
+        return '1';
+    if (length / 2 + 1 < k)
+        return 97 - findKthBit(n - 1, (1 << n) - k);
+    return findKthBit(n - 1, k);
+}
+
+int Solution::maxNonOverlapping(std::vector<int>& nums, int target)
+{
+    std::map<int, int> map;
+    for (size_t i = 0; i < nums.size(); i++)
+    {
+
+    }
+    return 0;
+}
+
+std::vector<std::vector<int>> Solution::generate(int numRows)
+{
+    std::vector<std::vector<int>> res;
+    for (size_t i = 0; i < numRows; i++)
+    {
+        std::vector<int> row(i + 1, 1);
+        for (size_t j = 1; j < i; j++)
+            row[j] = res.back().at(j - 1) + res.back().at(j);
+        res.push_back(row);
+    }
+    return res;
+}
+
+std::vector<int> Solution::getRow(int rowIndex)
+{
+    std::vector<int> res(rowIndex + 1, 1);
+    int hi = rowIndex, lo = 1;
+    int i = 0;
+    while (lo < hi)
+    {
+        res[i] = res[i++] * hi-- / lo++;
+        res[rowIndex - i - 1] = res[i];
+    }
+    return res;
+}
+
+Node* Solution::cloneGraph(Node* node)
+{
+    if (!node)
+        return nullptr;
+    static std::map<Node*, Node*> map;
+    std::vector<Node*> neighbors;
+    Node* res = new Node(node->val);
+    map[node] = res;
+    for (auto& neighbor : node->neighbors) 
+    {
+        if (map.count(neighbor) == 0)
+            map[neighbor] = cloneGraph(neighbor);
+        neighbors.push_back(map[neighbor]);
+    }
+    res->neighbors = neighbors;
+    return res;
+}
+
+ListNode* Solution::addTwoNumbers(ListNode* l1, ListNode* l2)
+{
+    int sum = 0;
+    ListNode* l3 = nullptr;
+    ListNode** node = &l3;
+    while (l1 != nullptr || l2 != nullptr || 0 < sum)
+    {
+        if (l1 != nullptr)
+        {
+            sum += l1->val;
+            l1 = l1->next;
+        }
+        if (l2 != nullptr)
+        {
+            sum += l2->val;
+            l2 = l2->next;
+        }
+        (*node) = new ListNode(sum % 10);
+        sum /= 10;
+        node = &((*node)->next);
+    }
+    return l3;
+}
+
+std::string Solution::addStrings(std::string num1, std::string num2)
+{
+    auto it = num1.rbegin();
+    auto jt = num2.rbegin();
+    std::string res;
+    int carry = 0;
+    while (0 != carry || it != num1.rend() || jt != num2.rend())
+    {
+        auto temp = carry;
+        if (it != num1.rend())
+            temp += *it++ - '0';
+        if (jt != num2.rend())
+            temp += *jt++ - '0';
+        carry = 9 < temp ? 1 : 0;
+        res.push_back(temp % 10 + '0');
+    }
+    std::reverse(res.begin(), res.end());
+    return res;
+}
+
+std::string Solution::multiply(std::string num1, std::string num2)
+{
+    for (size_t i = 0; i < num1.length(); i++)
+    {
+
+    }
+    return std::string();
+}
+
+bool Solution::isValid(std::string s)
+{
+    int n = s.size();
+    if ((n & n - 1) != 0)
+        return false;
+
+    std::unordered_map<char, char> pairs = {
+        {')', '('},
+        {']', '['},
+        {'}', '{'}
+    };
+    std::stack<char> stk;
+    for (char ch : s) {
+        if (pairs.count(ch)) {
+            if (stk.empty() || stk.top() != pairs[ch]) {
+                return false;
+            }
+            stk.pop();
+        }
+        else {
+            stk.push(ch);
+        }
+    }
+    return stk.empty();
+}
+
+int Solution::longestPalindrome(std::string s)
+{
+    std::unordered_map<char, int> umap;
+    for (const auto& ch : s)
+        umap[ch]++;
+    int res = 0;
+    for (const auto& e : umap) {
+        if (e.second % 2 == 0)
+            res += e.second;
+        else
+            res += e.second - 1;
+    }
+    if (s.length() != res)
+        res++;
+    return res;
 }
