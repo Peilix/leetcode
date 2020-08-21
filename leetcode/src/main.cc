@@ -108,12 +108,15 @@ int main()
         Solution::merge(nums1, 3, nums2, 3);
     }
     {
+        ListNode f(6);
+        //ListNode e(5, &f);
         ListNode e(5);
         ListNode d(4, &e);
         ListNode c(3, &d);
         ListNode b(2, &c);
         ListNode a(1, &b);
-        Solution::reverseBetween(&a, 2, 4);
+        Solution::reorderList(&a);
+        //Solution::reverseBetween(&a, 2, 4);
     }
     {
         ListNode b(5);
@@ -209,6 +212,25 @@ int main()
         test[4].right = &test[8];
 
         Solution::pathSum(&test[0],8);
+    } 
+    {
+        TreeNode test[5];
+        test[0].val = 3;
+        test[1].val = 9;;
+        test[2].val = 20;
+        test[3].val = 15;
+        test[4].val = 7;
+        test[0].left = &test[1];
+        test[0].right = &test[2];
+        test[1].left = &test[3];
+        test[1].right = &test[4];
+        Solution::minDepth(&test[0]);
+    }
+    {
+        int n = 6, headID = 2;
+        std::vector<int> manager = { 2, 2, -1, 2, 2, 2 }, informTime = { 0, 0, 1, 0, 0, 0 };
+        n = 7, headID = 6, manager = { 1, 2, 3, 4, 5, 6, -1 }, informTime = { 0, 6, 5, 4, 3, 2, 1 };
+        Solution::numOfMinutes(n, headID, manager, informTime);
     }
     {
         std::vector<std::vector<int>> grid;
@@ -239,6 +261,27 @@ int main()
     }
     Solution::addStrings("0", "0");
     Solution::isValid("()");
+    Solution::canPermutePalindrome("code");
+    {
+        std::vector<int> arr = { 1 };
+        Solution::threeConsecutiveOdds(arr);
+        std::vector<int> prices = {1, 2, 3, 4, 5};
+        Solution::maxProfit_3rd(prices);
+    }
+    Solution::toGoatLatin("I speak Goat Latin");
+    Solution::distributeCandies(45, 3);
+    Solution::minDays(61455274);
+    Solution::minDays(56);
+    {
+        std::vector<std::vector<char>> board = {
+            {'E', 'E', 'E', 'E', 'E'},
+            {'E', 'E', 'M', 'E', 'E'},
+            {'E', 'E', 'E', 'E', 'E'},
+            {'E', 'E', 'E', 'E', 'E'}
+        };
+        std::vector<int> click = { 3, 0 };
+        Solution::updateBoard(board, click);
+    }
     CombinationIterator* iterator = new CombinationIterator("abc", 2);
     std::cout << iterator->hasNext() << std::endl;
     std::cout << iterator->next() << std::endl;

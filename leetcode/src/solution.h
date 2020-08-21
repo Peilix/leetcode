@@ -115,5 +115,30 @@ public:
     static std::string multiply(std::string num1, std::string num2);
     static bool isValid(std::string s);
     static int longestPalindrome(std::string s);
+    static bool canPermutePalindrome(std::string s);
+    static int removeBoxes(std::vector<int>& boxes);
+    static int eraseOverlapIntervals(std::vector<std::vector<int>>& intervals);
+    static std::vector<int> findPermutation(std::string s);
+    static bool threeConsecutiveOdds(std::vector<int>& arr);
+    static int minOperations(int n);
+    static int maxDistance(std::vector<int>& position, int m);
+    static int minDays(int n);
+    static int maxProfit_1st(std::vector<int>& prices); // leetcode 121
+    static int maxProfit_2nd(std::vector<int>& prices); // leetcode 122
+    static int maxProfit_3rd(std::vector<int>& prices); // leetcode 123
+    static int maxProfit_4th(std::vector<int>& prices); // leetcode 188
+    static int maxProfit_5th(std::vector<int>& prices); // leetcode 309
+    static std::vector<int> distributeCandies(int candies, int num_people);
+    static std::vector<int> numsSameConsecDiff(int N, int K);
+    static std::string toGoatLatin(std::string S);
+    static void reorderList(ListNode* head);
+    static std::vector<std::vector<char>> updateBoard(std::vector<std::vector<char>>& board, std::vector<int>& click);
+    static int minDepth(TreeNode* root);
+    static int maxDepth(TreeNode* root);
+    static std::vector<int> sortArrayByParity(std::vector<int>& A);
+    static bool isBalanced(TreeNode* root);
+    static int numOfMinutes(int n, int headID, std::vector<int>& manager, std::vector<int>& informTime);
+    static bool isCousins(TreeNode* root, int x, int y);
+    static bool judgePoint24(std::vector<int>& nums);
 private:
 };

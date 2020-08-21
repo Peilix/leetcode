@@ -1376,40 +1376,37 @@ int Solution::closestValue(TreeNode* root, double target)
 int Solution::orangesRotting(std::vector<std::vector<int>>& grid)
 {
     std::queue<std::pair<size_t, size_t>> q;
+    int fresh = 0;
     for (size_t row = 0; row < grid.size(); row++)
         for (size_t column = 0; column < grid[0].size(); column++)
             if (grid[row][column] == 2)
                 q.push(std::make_pair(row, column));
+            else if (grid[row][column] == 1)
+                fresh++;
     unsigned size = 0;
-    int rot_times = -1;
-    while (q.size() != size)
+    int rot_times = 0;
+    while (!q.empty() && fresh != 0)
     {
         rot_times++;
         size = q.size();
-        while (!q.empty())
+        while (size-- != 0)
         {
             auto rotted_coord = q.front();
             q.pop();
-            // rot q. 4 dirs
             std::vector<std::pair<size_t, size_t>> rotting_coords;
             if (0 < rotted_coord.first) rotting_coords.push_back(std::make_pair(rotted_coord.first - 1, rotted_coord.second));
             if (rotted_coord.first + 1 < grid.size()) rotting_coords.push_back(std::make_pair(rotted_coord.first + 1, rotted_coord.second));
             if (0 < rotted_coord.second) rotting_coords.push_back(std::make_pair(rotted_coord.first, rotted_coord.second - 1));
             if (rotted_coord.second + 1 < grid[0].size()) rotting_coords.push_back(std::make_pair(rotted_coord.first, rotted_coord.second + 1));
             for (auto coord : rotting_coords)
-                if (1 == grid[coord.first][coord.second])
+                if (1 == grid[coord.first][coord.second]) {
+                    fresh--;
                     grid[coord.first][coord.second] = 2;
+                    q.push(std::make_pair(coord.first, coord.second));
+                }
         }
-        for (size_t row = 0; row < grid.size(); row++)
-            for (size_t column = 0; column < grid[0].size(); column++)
-                if (grid[row][column] == 2)
-                    q.push(std::make_pair(row, column));
     }
-    for (size_t row = 0; row < grid.size(); row++)
-        for (size_t column = 0; column < grid[0].size(); column++)
-            if (grid[row][column] == 1)
-                return -1;
-    return rot_times;
+    return fresh == 0 ? rot_times : -1;
 }
 
 int Solution::titleToNumber(std::string s)
@@ -1457,6 +1454,7 @@ char Solution::findKthBit(int n, int k)
     return findKthBit(n - 1, k);
 }
 
+// TODO:
 int Solution::maxNonOverlapping(std::vector<int>& nums, int target)
 {
     std::map<int, int> map;
@@ -1487,7 +1485,8 @@ std::vector<int> Solution::getRow(int rowIndex)
     int i = 0;
     while (lo < hi)
     {
-        res[i] = res[i++] * hi-- / lo++;
+        long temp = res[i++] * hi--;
+        res[i] = temp / lo++;
         res[rowIndex - i - 1] = res[i];
     }
     return res;
@@ -1605,4 +1604,420 @@ int Solution::longestPalindrome(std::string s)
     if (s.length() != res)
         res++;
     return res;
+}
+
+bool Solution::canPermutePalindrome(std::string s)
+{
+    std::unordered_map<char, bool> umap(false);
+    for (const auto& ch : s)
+        umap[ch] = !umap[ch];
+    int count = 0;
+    for (const auto& e : umap)
+        if (e.second)
+            count++;
+    return count < 2;
+}
+
+int Solution::removeBoxes(std::vector<int>& boxes)
+{
+    return 0;
+}
+
+int Solution::eraseOverlapIntervals(std::vector<std::vector<int>>& intervals)
+{
+    std::sort(intervals.begin(), intervals.end());
+    return 0;
+}
+
+std::vector<int> Solution::findPermutation(std::string s)
+{
+    return std::vector<int>();
+}
+
+bool Solution::threeConsecutiveOdds(std::vector<int>& arr)
+{
+    for (size_t i = 0; i + 2 < arr.size(); i++)
+    {
+        if ((arr[i] & 1) == 0)
+            continue;
+        if ((arr[i] & arr[i + 1] & arr[i + 2] & 1) == 1)
+            return true;
+    }
+    return false;
+}
+
+int Solution::minOperations(int n)
+{
+    return n / 2 * (n - n / 2);
+    return 0;
+}
+
+int Solution::maxDistance(std::vector<int>& position, int m)
+{
+    std::sort(position.begin(), position.end());
+    std::vector<int> distance;
+    for (size_t i = 0; i + 1 < position.size(); i++)
+        distance.push_back(position.at(i + 1) - position.at(i));
+    if (2 == m)
+        return position.back() - position.at(0);
+    if (3 == m)
+        return std::min(position.at(position.size() - 2) - position.at(0), position.back() - position.at(1));
+    return 0;
+}
+
+int Solution::minDays(int n)
+{
+    static std::unordered_map<int, int> dp;
+    if (n <= 1)
+        return n;
+    if (dp.count(n) == 0)
+        dp[n] = 1 + std::min(n % 2 + minDays(n / 2), n % 3 + minDays(n / 3));
+    return dp[n];
+}
+
+int Solution::maxProfit_1st(std::vector<int>& prices)
+{
+    int min_price = INT_MAX;
+    int max_profit = 0;
+    for (auto& price : prices)
+    {
+        if (price < min_price)
+            min_price = price;
+        if (max_profit < price - min_price)
+            max_profit = price - min_price;
+    }
+    return max_profit;
+}
+
+int Solution::maxProfit_2nd(std::vector<int>& prices)
+{
+    return 0;
+}
+
+// TODO:
+int Solution::maxProfit_3rd(std::vector<int>& prices)
+{
+    std::vector<int> profits;
+    auto profit_once = maxProfit_1st(prices);
+    if (0 == profit_once)
+        return 0;
+    for (size_t i = 1; i + 1 < prices.size(); i++)
+    {
+        // max = maxbefore + max_post
+        std::vector<int> prices_before(prices.begin(), prices.begin() + i + 1);
+        std::vector<int> prices_after(prices.begin() + i + 1, prices.end());
+        // max before
+        //maxProfit_1st(prices_before);
+        // max after
+        //maxProfit_1st(prices_after);
+        profits.push_back(maxProfit_1st(prices_before) + maxProfit_1st(prices_after));
+        // sort max before and after
+        //add ttwo back()
+    }
+    int max_profit = 0;
+    for (const auto& profit : profits)
+        if (max_profit < profit)
+            max_profit = profit;
+    if (max_profit < profit_once)
+        max_profit = profit_once;
+    return max_profit;
+}
+
+int Solution::maxProfit_4th(std::vector<int>& prices)
+{
+    return 0;
+}
+
+int Solution::maxProfit_5th(std::vector<int>& prices)
+{
+    return 0;
+}
+
+std::vector<int> Solution::distributeCandies(int candies, int num_people)
+{
+    candies = 44;
+    int row_count = 0;
+    int square_of_num_people = num_people * num_people;
+    int limit = 0;
+    while (limit < candies)
+    {
+        row_count++;
+        limit = row_count * num_people * (num_people + 1) / 2 + square_of_num_people * (row_count - 1) * row_count / 2;
+    }
+    int minus = limit - candies;
+    std::vector<int> res(num_people, 0);
+    size_t i = 0;
+    for (; i < num_people; i++)
+    {
+        res[i] = row_count * (i + 1) + num_people * (row_count - 1) * row_count / 2;
+    }
+    while (0 < minus)
+    {
+        i--;
+        res[i] -= (row_count - 1) * num_people + i + 1;
+        minus -= (row_count - 1) * num_people + i + 1;
+    }
+    res[i] -= minus;
+    return res;
+}
+
+std::vector<int> Solution::numsSameConsecDiff(int N, int K)
+{
+    return std::vector<int>();
+}
+
+std::string Solution::toGoatLatin(std::string S)
+{
+    std::vector<std::string> word_list;
+    int last_index = 0;
+    for (size_t i = 0; i < S.length(); i++)
+        if (' ' == S.at(i)) {
+            word_list.push_back(S.substr(last_index, i - last_index));
+            last_index = i + 1;
+        }
+    word_list.push_back(S.substr(last_index, S.length() - last_index));
+    std::string res;
+    std::string suffix = "maa";
+    auto isVowel = [](char ch) { return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u'
+        || ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U'; };
+    for (size_t i = 0; i < word_list.size(); i++)
+    {
+        if (isVowel(word_list.at(i).at(0))) {
+            res.append(word_list.at(i));
+        }
+        else {
+            for (size_t j = 1; j < word_list.at(i).length(); j++)
+                res.push_back(word_list.at(i).at(j));
+            res.push_back(word_list.at(i).at(0));
+        }
+        res.append(suffix);
+        suffix.push_back('a');
+        if (i + 1 != word_list.size())
+            res.push_back(' ');
+    }
+    return res;
+}
+
+void Solution::reorderList(ListNode* head)
+{
+    ListNode* fast = head, * slow = head;
+    while (fast && fast->next)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    //reverse second half
+    ListNode* prev = nullptr;
+    ListNode* curr = slow;
+    while (curr)
+    {
+        ListNode* next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    slow = prev;
+
+    // merge
+    while (slow && slow->next)
+    {
+        auto temp = head->next;
+        head->next = slow;
+        head = temp;
+        temp = slow->next;
+        slow->next = head;
+        slow = temp;
+    }
+}
+
+std::vector<std::vector<char>> Solution::updateBoard(std::vector<std::vector<char>>& board, std::vector<int>& click)
+{
+    int dir_x[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
+    int dir_y[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+    auto dfs = make_y_combinator([&](auto&& dfs, int row, int column) {
+        if (row < 0 || row >= board.size() || column < 0 || column >= board[0].size() || board[row][column] != 'E')
+            return;
+        else if ('E' == board[row][column]) {
+            int count = 0;
+            int row_size = board.size(), column_size = board.at(0).size();
+            for (size_t i = 0; i < 8; i++)
+            {
+                auto x = row + dir_x[i];
+                auto y = column + dir_y[i];
+                if (0 <= x && x < row_size && 0 <= y && y < column_size && 'M' == board[x][y])
+                    count++;
+            }
+            if (0 == count) {
+                board[row][column] = 'B';
+                dfs(row - 1, column - 1);
+                dfs(row - 1, column);
+                dfs(row - 1, column + 1);
+                dfs(row, column - 1);
+                dfs(row, column + 1);
+                dfs(row + 1, column - 1);
+                dfs(row + 1, column);
+                dfs(row + 1, column + 1);
+            }
+            else
+            {
+                board[row][column] = count + '0';
+            }
+        }
+        });
+    if ('M' == board[click.at(0)][click.at(1)])
+        board[click.at(0)][click.at(1)] = 'X';
+    else
+        dfs(click.at(0), click.at(1));
+    return board;
+}
+
+int Solution::minDepth(TreeNode* root)
+{
+    if (root == nullptr) return 0;
+    std::queue<TreeNode*> queue;
+    queue.push(root);
+    int res = 0;
+    int count = 0;
+    while (!queue.empty())
+    {
+        res++;
+        count = queue.size();
+        while (0 != count--)
+        {
+            TreeNode* curr = queue.front();
+            queue.pop();
+            if (nullptr == curr->left && nullptr == curr->right)
+                return res;
+            if (curr->left)
+                queue.push(curr->left);
+            if (curr->right)
+                queue.push(curr->right);
+        }
+    }
+    return res;
+}
+
+int Solution::maxDepth(TreeNode* root)
+{
+    if (root == nullptr) return 0;
+    std::queue<TreeNode*> queue;
+    queue.push(root);
+    int res = 0;
+    int count = 0;
+    while (!queue.empty())
+    {
+        res++;
+        count = queue.size();
+        while (0 != count--)
+        {
+            TreeNode* curr = queue.front();
+            queue.pop();
+            if (curr->left)
+                queue.push(curr->left);
+            if (curr->right)
+                queue.push(curr->right);
+        }
+    }
+    return res;
+}
+
+std::vector<int> Solution::sortArrayByParity(std::vector<int>& A)
+{
+    int left = 0, right = A.size() - 1;
+    while (left < right)
+    {
+        if (0 == A[left] % 2)
+        {
+            left++;
+            continue;
+        }
+        if (1 == A[right] % 2)
+        {
+            right--;
+            continue;
+        }
+        std::swap(A[left++], A[right--]);
+    }
+    return A;
+}
+
+bool Solution::isBalanced(TreeNode* root)
+{
+    auto helper = make_y_combinator([](auto&& height, TreeNode* root)->int {
+        if (root == nullptr)
+            return 0;
+        int leftHeight = 0, rightHeight = 0;
+        if (-1 == (leftHeight = helper(root->left)) || -1 == (rightHeight = helper(root->right)) || 1 < abs(leftHeight - rightHeight))
+            return -1;
+        else
+            return std::max(leftHeight, rightHeight) + 1;
+        });
+    return 0 <= helper(root);
+}
+int Solution::numOfMinutes(int n, int headID, std::vector<int>& manager, std::vector<int>& informTime)
+{
+    auto helper = make_y_combinator([](auto&& helper, Node* node) {
+        if (node->neighbors.empty())
+            return node->val;
+        auto max_time = 0;
+        for (size_t i = 0; i < node->neighbors.size(); i++)
+            max_time = std::max(max_time, helper(node->neighbors[i]) + node->val);
+        return max_time;
+        });
+    std::vector<Node> employees;
+    for (size_t i = 0; i < n; i++)
+    {
+        Node employee(informTime[i]);
+        employees.push_back(employee);
+    }
+    for (size_t i = 0; i < n; i++)
+        if (headID != i)
+            employees[manager[i]].neighbors.push_back(&employees[i]);
+    int res;
+    res = helper(&employees[headID]);
+    return res;
+}
+
+bool Solution::isCousins(TreeNode* root, int x, int y)
+{
+    if (root == nullptr) return 0;
+    std::queue<TreeNode*> queue;
+    queue.push(root);
+    int count = 0;
+    std::map<int, int> parent;
+    std::vector<std::vector<int>> level_order;
+    while (!queue.empty())
+    {
+        count = queue.size();
+        std::vector<int> level;
+        while (0 != count--)
+        {
+            TreeNode* curr = queue.front();
+            queue.pop();
+            level.push_back(curr->val);
+            if (curr->left) {
+                parent[curr->left->val] = curr->val;
+                queue.push(curr->left);
+            }
+            if (curr->right) {
+                parent[curr->left->val] = curr->val;
+                queue.push(curr->right);
+            }
+        }
+        auto result1 = std::find(level.begin(), level.end(), x);
+        auto result2 = std::find(level.begin(), level.end(), y);
+        if (result1 != level.end() && result2 != level.end())
+            return parent[x] != parent[y];
+        else if (result1 != level.end() || result2 != level.end())
+            return false;
+        level_order.push_back(level);
+    }
+    return false;
+}
+
+bool Solution::judgePoint24(std::vector<int>& nums)
+{
+    return false;
 }
