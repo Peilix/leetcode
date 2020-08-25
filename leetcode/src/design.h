@@ -219,3 +219,20 @@ private:
  * string param_1 = obj->next();
  * bool param_2 = obj->hasNext();
  */
+
+class StreamChecker {
+public:
+    StreamChecker(std::vector<std::string>& words) {
+
+    }
+
+    bool query(char letter) {
+
+    }
+};
+
+/**
+ * Your StreamChecker object will be instantiated and called as such:
+ * StreamChecker* obj = new StreamChecker(words);
+ * bool param_1 = obj->query(letter);
+ */

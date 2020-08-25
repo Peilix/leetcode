@@ -2097,33 +2097,67 @@ std::vector<std::vector<int>> Solution::findSubsequences(std::vector<int>& nums)
 int Solution::mincostTickets(std::vector<int>& days, std::vector<int>& costs)
 {
     std::vector<int> dp(days.size(), 0);
-    dp[0] = std::min(std::min(costs[0], costs[1]), costs[2]);
+    dp[0] = costs[0];
+    int day_offset[3] = { days[0] + 1, days[0] + 1, days[0] + 1 };
+    int day_now = days[0] + 1;
     for (size_t i = 1; i < days.size(); i++)
     {
-        std::vector<int> prices(3, dp[i - 1]);
+        std::vector<int> pri(3, dp[i - 1]);
         // use  1-day pass
-        prices[0] = dp[i - 1] + costs[0];
+        //if (day_offset[0] < days[i]) {
+        //    pri[0] += costs[0];
+        //    day_offset[0] += 1;
+        //}
+        //// use  7-day pass
+        //if (day_offset[1] < days[i]) {
+        //    pri[1] += costs[1];
+        //    day_offset[1] += 7;
+        //}
+        //// use  15-day pass
+        //if (day_offset[2] < days[i]) {
+        //    pri[2] += costs[2];
+        //    day_offset[2] += 30;
+        //}
+        //dp[i];
+
+        if (i == 4 || i == 5) {
+            auto  k = 0;
+        }
+        // use  1-day pass
+        pri[0] = dp[i-1] + costs[0];// (days[i] - day_now)* costs[0] + dp[i - 1];
         // use  7-day pass
+        int minus = 0;
         if (days[i] - days[0] < 7)
-            prices[1] = costs[1];
+            pri[1] = costs[1];
         else
         {
             int last = i;
             while (days[i] - 7 < days[last])
                 last--;
-            prices[1] = costs[1] + dp[last];
+            pri[1] = costs[1] + dp[last];
         }
+
         // use  30-day pass
         if (days[i] - days[0] < 30)
-            prices[2] = costs[2];
+            pri[2] = costs[2];
         else
         {
             int last = i;
             while (days[i] - 30 < days[last])
                 last--;
-            prices[2] = costs[2] + dp[last];
+            pri[2] = costs[2] + dp[last];
         }
-        dp[i] = std::min(std::min(prices[0], prices[1]), prices[2]);
+        // use  30-day pass
+        //minus = 0;
+        //while (days[i] -  30 > days[i - minus])
+        //    minus++;
+        //pri[2] = costs[2] + dp[i - minus];
+        std::sort(pri.begin(), pri.end());
+        dp[i] = pri[0];
+        //dp[i - 1] + costs[0] * (days[i] - day_offset[0]);
+        //dp[i - 1] + costs[1] * (days[i] - day_offset[1]) / 7);
+        //dp[i - 1] + costs[2] * (days[i] - day_offset[2]) / 30;
+        //dp[i] = std::min(std::min(dp[i - 1] + costs[0]*(days[i] - day_offset[0]), dp[i - 1] + costs[1] * (days[i] - day_offset[1])/7), dp[i - 1] + costs[2] * (days[i] - day_offset[2]) / 30);
     }
     return dp.back();
 }

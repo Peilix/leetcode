@@ -140,5 +140,11 @@ public:
     static int numOfMinutes(int n, int headID, std::vector<int>& manager, std::vector<int>& informTime);
     static bool isCousins(TreeNode* root, int x, int y);
     static bool judgePoint24(std::vector<int>& nums);
+    static int rangeBitwiseAnd(int m, int n);
+    static bool repeatedSubstringPattern(std::string s);
+    static int sumOfLeftLeaves(TreeNode* root);
+    static std::vector<std::vector<int>> findSubsequences(std::vector<int>& nums);
+    static int mincostTickets(std::vector<int>& days, std::vector<int>& costs);
+    static std::vector<std::string> letterCombinations(std::string digits);
 private:
 };

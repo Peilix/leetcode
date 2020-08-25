@@ -222,8 +222,9 @@ int main()
         test[4].val = 7;
         test[0].left = &test[1];
         test[0].right = &test[2];
-        test[1].left = &test[3];
-        test[1].right = &test[4];
+        test[2].left = &test[3];
+        test[2].right = &test[4];
+        Solution::sumOfLeftLeaves(&test[0]);
         Solution::minDepth(&test[0]);
     }
     {
@@ -247,6 +248,9 @@ int main()
     {
         std::vector<int> citations = { 3, 0, 6, 1, 5 };
         Solution::hIndex(citations);
+        std::vector<int> nums = { 4, 6, 7, 7 };
+        nums = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 1, 1, 1, 1};
+        Solution::findSubsequences(nums);
     }
     { 
         Node node_1st = Node(1);
@@ -273,6 +277,10 @@ int main()
     Solution::minDays(61455274);
     Solution::minDays(56);
     {
+        std::vector<int> days = { 1, 4, 6, 7, 8, 20 }, costs = { 2, 7, 15 };
+        Solution::mincostTickets(days, costs);
+    }
+    {
         std::vector<std::vector<char>> board = {
             {'E', 'E', 'E', 'E', 'E'},
             {'E', 'E', 'M', 'E', 'E'},
@@ -282,6 +290,8 @@ int main()
         std::vector<int> click = { 3, 0 };
         Solution::updateBoard(board, click);
     }
+    Solution::rangeBitwiseAnd(3, 4);
+    Solution::repeatedSubstringPattern("abab");
     CombinationIterator* iterator = new CombinationIterator("abc", 2);
     std::cout << iterator->hasNext() << std::endl;
     std::cout << iterator->next() << std::endl;
