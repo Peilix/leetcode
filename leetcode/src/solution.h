@@ -8,6 +8,7 @@
 #include <functional>
 #include <algorithm>
 #include <sstream>
+#include <numeric>
 
 #include "node.h"
 #include "list_node.h"
@@ -146,5 +147,28 @@ public:
     static std::vector<std::vector<int>> findSubsequences(std::vector<int>& nums);
     static int mincostTickets(std::vector<int>& days, std::vector<int>& costs);
     static std::vector<std::string> letterCombinations(std::string digits);
+    static std::vector<std::string> fizzBuzz(int n);
+    static ListNode* sortList(ListNode* head);
+    static std::vector<int> countBits(int num);
+    static TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2);
+    static std::vector<int> findRightInterval(std::vector<std::vector<int>>& intervals);
+    static std::string intToRoman(int num);
+    static int romanToInt(std::string s);
+    static bool judgeCircle(std::string moves);
+    static int rand10();
+    static bool hasCycle(ListNode* head);
+    static ListNode* getIntersectionNode(ListNode* headA, ListNode* headB);
+    static std::vector<std::string> findRestaurant(std::vector<std::string>& list1, std::vector<std::string>& list2);
+    static std::string shortestParlindrome(std::string s);
+    static std::vector<int> pancakeSort(std::vector<int>& A);
+    static bool containsPattern(std::vector<int>& arr, int m, int k);
+    static int getMaxLen(std::vector<int>& nums);
+    static int largestComponentSize(std::vector<int>& A);
+    static TreeNode* deleteNode(TreeNode* root, int key);
+    static std::string largestTimeFromDigits(std::vector<int>& A);
+    static std::vector<std::vector<int>> permute(std::vector<int>& nums);
+    static bool containsNearbyAlmostDuplicate(std::vector<int>& nums, int k, int t);
+    static std::vector<std::string> binaryTreePaths(TreeNode* root);
+    static std::vector<int> partitionLabels(std::string S);
 private:
 };
