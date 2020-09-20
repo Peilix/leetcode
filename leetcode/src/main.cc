@@ -1,8 +1,10 @@
 #include <iostream>
+#include <memory>
 
 #include "solution.h"
 #include "timer.h"
 #include "design.h"
+#include "concurrency.h"
 
 //template<class M>
 //void print(const M& mmap)
@@ -12,7 +14,23 @@
 //    std::cout << '\n';
 //}
 #include <ctime>
+char* convert(char* s, int numRows)
+{
+	if (numRows == 1) return s;
 
+	int len = strlen(s);
+	char* ret = (char*)malloc(sizeof(char) * (len + 1));
+	int cycleLen = 2 * numRows - 2;
+
+	for (int i = 0; i < numRows; i++) {
+		for (int j = 0; j + i < len; j += cycleLen) {
+			ret += s[j + i];
+			if (i != 0 && i != numRows - 1 && j + cycleLen - i < len)
+				ret += s[j + cycleLen - i];
+		}
+	}
+	return ret;
+}
 
 static unsigned times = 0;
 bool noConflict(const std::vector<std::vector<int>>& board, int current, int qindex, int n) {
@@ -186,7 +204,10 @@ int main()
 	Solution::longestDiverseString(7, 1, 0);
 	std::vector<std::vector<int>> intervals = { {1, 3}, { 2, 6 }, { 8, 10 }, { 15, 18 } };
 	Solution::merge(intervals);
-
+	{
+		Trie trie;
+		trie.insert("apple");
+	}
 	{
 		std::vector<int> nums = { 0, 1, 0, 1, 0, 1, 99, 2, 2, 2 };
 		Solution::singleNumber(nums);
@@ -244,7 +265,28 @@ int main()
 		Solution::reorderList(&a);
 		//Solution::reverseBetween(&a, 2, 4);
 	}
+	{
+		std::vector<int> nums1 = { 1, 1 };
+		std::vector<int> nums2 = { 1, 1, 1 };
+		Solution::numTriplets(nums1, nums2);
+	}
 	Solution::partitionLabels("ababcbacadefegdehijhklij");
+	Solution::lengthOfLastWord("Hello World");
+	Solution::isRobotBounded("GLGLGGLGL");
+	Solution::simplifyPath("/a/../../b/../c//.//");
+	Solution::sequentialDigits(178546104, 812704742);
+	Solution::maxUniqueSplit("ababccc");
+	//char str[] = "PAHNAPLSIIGYIR";
+	//const char* s = "PAHNAPLSIIGYIR";
+	//char* s = new char[15];
+	//Solution::convert("PAHNAPLSIIGYIR", 4);
+	//char * ret = convert(s, 4);
+	{
+		std::vector<int> nums = { 3, 10, 5, 25, 2, 8 };
+		nums = { 2147483647, 2147483646, 2147483645 };
+		Solution::findMaximumXOR(nums);
+		Solution::permute(nums);
+	}
 	{
 		ListNode b(5);
 		ListNode a(3, &b);
@@ -284,6 +326,15 @@ int main()
 		logger.shouldPrintMessage(11, "foo");
 	}
 	{
+		int n = 4;
+		std::vector<std::vector<int>> preferences = { {1, 2, 3}, { 3, 2, 0 }, { 3, 1, 0 }, { 1, 2, 0 } };
+		std::vector<std::vector<int>> pairs = { {0, 1},{2, 3} };
+		Solution::unhappyFriends(n, preferences, pairs);
+
+		std::vector<std::vector<int>> points = { {0, 0},{1, 1},{1, 0},{-1, 1} };
+		Solution::minCostConnectPoints(points);
+	}
+	{
 		std::vector<int> arr = { 2, 1, 3, 5, 4, 6, 7 };
 		int k = 2;
 		Solution::getWinner(arr, k);
@@ -313,6 +364,18 @@ int main()
 		Solution::findDuplicates(nums);
 	}
 	{
+		WordDictionary wordDictionary;
+		wordDictionary.addWord("bad");
+		wordDictionary.addWord("dad");
+		wordDictionary.addWord("mad");
+		bool temp;
+		temp = wordDictionary.search("pad"); // return False
+		temp = wordDictionary.search("bad"); // return True
+		temp = wordDictionary.search(".ad"); // return True
+		temp = wordDictionary.search("b.."); // return True
+		temp == false;
+	}
+	{
 		TreeNode c(2);
 		TreeNode b(3, nullptr, &c);
 		TreeNode a(1, &b, nullptr);
@@ -339,6 +402,8 @@ int main()
 		test[4].right = &test[8];
 
 		Solution::pathSum(&test[0], 8);
+		Solution::printTree(&test[0]);
+		Solution::isCompleteTree(&test[0]);
 	}
 	{
 		TreeNode test[5];
@@ -353,6 +418,9 @@ int main()
 		test[2].right = &test[4];
 		Solution::sumOfLeftLeaves(&test[0]);
 		Solution::minDepth(&test[0]);
+	}
+	{
+		std::vector<std::unique_ptr<TreeNode>> test;// = std::make_unique<TreeNode>();
 	}
 	{
 		TreeNode* simpleBST[7];
@@ -378,12 +446,23 @@ int main()
 		//Solution::deleteNode(simpleBST[5], 7);
 
 		//Solution::deleteNode(simpleBST[0], 2);
+
+		delete[] simpleBST;
 	}
 	{
 		int n = 6, headID = 2;
 		std::vector<int> manager = { 2, 2, -1, 2, 2, 2 }, informTime = { 0, 0, 1, 0, 0, 0 };
 		n = 7, headID = 6, manager = { 1, 2, 3, 4, 5, 6, -1 }, informTime = { 0, 6, 5, 4, 3, 2, 1 };
 		Solution::numOfMinutes(n, headID, manager, informTime);
+	}
+	{
+		std::vector<int> nums = { 25, 14, 16, 44, 9, 22, 15, 27, 23, 10, 41, 25, 14, 35, 28, 47, 39, 26, 11, 38 };
+		int S = 43;
+		Solution::findTargetSumWays(nums, S);
+	}
+	{
+		std::vector<int> nums = { 1, 1, 1 };
+		Solution::subarraySum(nums, 2);
 	}
 	{
 		std::vector<std::vector<int>> grid;
@@ -415,6 +494,13 @@ int main()
 		node_4st.neighbors = { &node_1st, &node_3st };
 		Node* newnode = Solution::cloneGraph(&node_1st);
 	}
+	{
+		std::vector<int> T = { 73, 74, 75, 71, 69, 72, 76, 73 };
+		Solution::dailyTemperatures(T);
+	}
+	Solution::wordPattern("abba",
+		"dog dog dog dog");
+	Solution::countSubstrings("aaaaa");
 	Solution::addStrings("0", "0");
 	Solution::isValid("()");
 	Solution::canPermutePalindrome("code");
@@ -471,11 +557,16 @@ int main()
 		std::vector<int> nums = { 1, 5, 9, 1, 5, 9 };
 		Solution::containsNearbyAlmostDuplicate(nums, 2, 3);
 	}
-	auto boards = NQueens();
-	for (size_t i = 0; i < 6; i++)
-		for (size_t j = 0; j < 6; j++)
-			if (boards[0][i][j])
-				std::cout << i << "," << j << std::endl;
+	{
+		std::vector<int> candidates = { 2, 3, 6, 7 };
+		int target = 7;
+		Solution::combinationSum(candidates, target);
+	}
+	//auto boards = NQueens();
+	//for (size_t i = 0; i < 6; i++)
+	//	for (size_t j = 0; j < 6; j++)
+	//		if (boards[0][i][j])
+	//			std::cout << i << "," << j << std::endl;
 	Solution::rangeBitwiseAnd(3, 4);
 	Solution::repeatedSubstringPattern("abab");
 	CombinationIterator* iterator = new CombinationIterator("abc", 2);

@@ -158,6 +158,7 @@
     <ClCompile Include="src\tree_node.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\concurrency.h" />
     <ClInclude Include="src\list_node.h" />
     <ClInclude Include="src\node.h" />
     <ClInclude Include="src\solution.h" />

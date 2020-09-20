@@ -1,6 +1,11 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <map>
+
+#include "tree_node.h"
+#include <stack>
+
 class Logger {
 private:
 	std::unordered_map<std::string, int> umap;
@@ -85,28 +90,60 @@ public:
 class Trie {
 public:
     /** Initialize your data structure here. */
+    struct TrieNode
+    {
+        std::map<char, TrieNode*> children;
+        bool is_end = false;
+    };
     Trie() {
-
+        root = new TrieNode();
+    }
+    ~Trie() {
+        if (root->children.empty())
+            delete root;
     }
 
     /** Inserts a word into the trie. */
     void insert(std::string word) {
-
+        TrieNode* curr = root;
+        for (auto letter : word)
+        {
+            if (curr->children.find(letter) == curr->children.end()) {
+                curr->children[letter] = new TrieNode();
+            }
+            curr = curr->children[letter];
+        }
+        curr->is_end = true;
     }
 
     /** Returns if the word is in the trie. */
     bool search(std::string word) {
-
+        TrieNode* curr = root;
+        for (auto letter : word)
+        {
+            if (curr->children.find(letter) == curr->children.end()) {
+                return false;
+            }
+            curr = curr->children[letter];
+        }
+        return curr->is_end;
     }
 
     /** Returns if there is any word in the trie that starts with the given prefix. */
     bool startsWith(std::string prefix) {
-
+        TrieNode* curr = root;
+        for (auto letter : prefix)
+        {
+            if (curr->children.find(letter) == curr->children.end()) {
+                return false;
+            }
+            curr = curr->children[letter];
+        }
+        return true;
     }
 
 private:
-    std::vector<Trie> links;
-    int R = 26;
+    TrieNode* root;
 };
 
 /**
@@ -118,20 +155,53 @@ private:
  */
 
 class WordDictionary {
+    struct TrieNode
+    {
+        std::map<char, TrieNode*> children;
+        bool is_end = false;
+    };
+    TrieNode* root;
 public:
     /** Initialize your data structure here. */
     WordDictionary() {
-
+        root = new TrieNode();
     }
 
     /** Adds a word into the data structure. */
     void addWord(std::string word) {
-
+        TrieNode* curr = root;
+        for (auto letter : word)
+        {
+            if (curr->children.find(letter) == curr->children.end()) {
+                curr->children[letter] = new TrieNode();
+            }
+            curr = curr->children[letter];
+        }
+        curr->is_end = true;
     }
 
     /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
     bool search(std::string word) {
-
+        return searchRecursive(root, word, 0);
+    }
+private:
+    bool searchRecursive(TrieNode* curr, std::string& word, size_t index) {
+        if (index == word.size())
+            return curr->is_end;
+        char letter = word[index];
+        if (letter == '.')
+        {
+            for (const auto& e: curr->children)
+                if (searchRecursive(e.second, word, index + 1))
+                    return true;
+        }
+        else
+        {
+            if (curr->children.find(letter) == curr->children.end())
+                return false;
+            return searchRecursive(curr->children[letter], word, index + 1);
+        }
+        return false;
     }
 };
 
@@ -235,4 +305,41 @@ public:
  * Your StreamChecker object will be instantiated and called as such:
  * StreamChecker* obj = new StreamChecker(words);
  * bool param_1 = obj->query(letter);
+ */
+
+
+class BSTIterator {
+    std::stack<TreeNode*> s;
+public:
+    BSTIterator(TreeNode* root) {
+        while (root) {
+            s.push(root);
+            root = root->left;
+        }
+    }
+
+    /** @return the next smallest number */
+    int next() {
+        TreeNode* curr = s.top();
+        s.pop();
+        int result = curr->val;
+        curr = curr->right;
+        while (curr) {
+            s.push(curr);
+            curr = curr->left;
+        }
+        return result;
+    }
+
+    /** @return whether we have a next smallest number */
+    bool hasNext() {
+        return s.empty();
+    }
+};
+
+/**
+ * Your BSTIterator object will be instantiated and called as such:
+ * BSTIterator* obj = new BSTIterator(root);
+ * int param_1 = obj->next();
+ * bool param_2 = obj->hasNext();
  */

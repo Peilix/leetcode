@@ -3322,9 +3322,9 @@ int Solution::minCostConnectPoints(std::vector<std::vector<int>>& points)
 	static auto manhattan_distance = [](std::vector<int>& pointA, std::vector<int>& pointB) {
 		return std::abs(pointA[0] - pointB[0]) + std::abs(pointA[1] - pointB[1]);
 	};
-	int res = 0;
 #if false
 	// Brute Greedy : TLE
+	int res = 0;
 	int connected_count = 1;
 	std::vector<bool> connected(points.size(), false);
 	connected[0] = true;
@@ -3346,7 +3346,7 @@ int Solution::minCostConnectPoints(std::vector<std::vector<int>>& points)
 		connected_count++;
 	}
 #elif true
-	// Kruskal's / Union Find
+	// Kruskal's
 	struct edge
 	{
 		int v;
@@ -3360,45 +3360,25 @@ int Solution::minCostConnectPoints(std::vector<std::vector<int>>& points)
 			return weight > other.weight;
 		}
 	};
+	int res = 0;
 	std::vector<edge> edges;
 	for (size_t i = 0; i + 1 < points.size(); i++)
 	{
 		for (size_t j = i + 1; j < points.size(); j++)
 		{
-			edges.emplace_back(i, j, manhattan_distance(points[i], points[j]));
+			edges.emplace_back(i, j ,manhattan_distance(points[i], points[j]));
 		}
 	}
 	std::sort(edges.begin(), edges.end());
-
-	//quick union
-	std::vector<int> id(points.size(), 0);
-	for (size_t i = 0; i < points.size(); i++)
-		id[i] = i;
-	auto root = [&](int i) -> int {
-		while (id[i] != i)
-			i = id[i];
-		return i;
-	};
-	auto is_connected = [&](int p, int q) -> bool {
-		return root(p) == root(q);
-	};
-	auto connect = [&](int p, int q) -> void {
-		int i = root(p);
-		int j = root(q);
-		id[i] = j;
-	};
-	int edge_used = 0;
 	for (const auto& e : edges)
 	{
-		if (!is_connected(e.v, e.w))
+		// union-find (e.v,e.w)
+		// if not connected
 		{
-			connect(e.v, e.w);
 			res += e.weight;
-			edge_used++;
+			//update union find;
 		}
-		if (points.size() - 1 == edge_used)
-			break;
-		}
+	}
 #else
 	// Prim's
 
@@ -3767,8 +3747,6 @@ std::string Solution::reorderSpaces(std::string text)
 	res.resize(len);
 	return res;
 }
-
-// TODO: backtrack + dfs(append last / next);
 int Solution::maxUniqueSplit(std::string s)
 {
 	std::map<std::string, bool> apmap;
