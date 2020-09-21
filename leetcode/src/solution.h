@@ -209,5 +209,7 @@ public:
     static std::string reorderSpaces(std::string text);
     static int maxUniqueSplit(std::string s);
     static int maxProductPath(std::vector<std::vector<int>>& grid);
+    static TreeNode* convertBST(TreeNode* root);
+    static bool carPooling(std::vector<std::vector<int>>& trips, int capacity);
 private:
 };

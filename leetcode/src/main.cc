@@ -332,6 +332,7 @@ int main()
 		Solution::unhappyFriends(n, preferences, pairs);
 
 		std::vector<std::vector<int>> points = { {0, 0},{1, 1},{1, 0},{-1, 1} };
+		points = { {0, 0},{2, 2},{3, 10},{5, 2},{7, 0} };
 		Solution::minCostConnectPoints(points);
 	}
 	{
@@ -403,6 +404,7 @@ int main()
 
 		Solution::pathSum(&test[0], 8);
 		Solution::printTree(&test[0]);
+		Solution::convertBST(&test[0]);
 		Solution::isCompleteTree(&test[0]);
 	}
 	{

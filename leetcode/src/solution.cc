@@ -205,7 +205,7 @@ void Solution::solve(std::vector<std::vector<char>>& board)
 		dfs(row + 1, column, grid);
 		dfs(row, column - 1, grid);
 		dfs(row, column + 1, grid);
-		});
+	});
 	for (size_t i = 0; i < board.size(); i++)
 		for (size_t j = 0; j < board[0].size(); j++)
 			if (i == 0 || i == board.size() - 1 || j == 0 || j == board[0].size() - 1)
@@ -1214,7 +1214,7 @@ int Solution::diameterOfBinaryTree(TreeNode* root)
 		int R = height(node->right);
 		ans = std::max(ans, L + 1 + R + 1);
 		return std::max(L, R) + 1;
-		});
+	});
 	height(root);
 	return ans;
 }
@@ -1925,7 +1925,7 @@ std::vector<std::vector<char>> Solution::updateBoard(std::vector<std::vector<cha
 				board[row][column] = count + '0';
 			}
 		}
-		});
+	});
 	if ('M' == board[click.at(0)][click.at(1)])
 		board[click.at(0)][click.at(1)] = 'X';
 	else
@@ -2014,7 +2014,7 @@ bool Solution::isBalanced(TreeNode* root)
 		else
 			return std::max(leftHeight, rightHeight) + 1;
 		return 0;
-		});
+	});
 	return 0 <= helper(root);
 	return false;
 }
@@ -2027,7 +2027,7 @@ int Solution::numOfMinutes(int n, int headID, std::vector<int>& manager, std::ve
 		for (size_t i = 0; i < node->neighbors.size(); i++)
 			max_time = std::max(max_time, helper(node->neighbors[i]) + node->val);
 		return max_time;
-		});
+	});
 	std::vector<Node> employees;
 	for (size_t i = 0; i < n; i++)
 	{
@@ -2742,7 +2742,7 @@ std::vector<std::string> Solution::binaryTreePaths(TreeNode* root)
 				dfs(root->right, str, result);
 			}
 		}
-		});
+	});
 
 	std::vector<std::string> result;
 	dfs(root, std::string(), result);
@@ -3089,7 +3089,7 @@ int Solution::sumRootToLeaf(TreeNode* root)
 		}
 		dfs(node->left, num << 1);
 		dfs(node->right, num << 1);
-		});
+	});
 	dfs(root, 0);
 	return sum;
 }
@@ -3154,7 +3154,7 @@ std::vector<int> Solution::distanceK(TreeNode* root, TreeNode* target, int K)
 			umap[root->right] = root;
 			dfs(root->right, target);
 		}
-		});
+	});
 	dfs(root, target);
 	for (auto& e : umap)
 		std::cout << "node " << e.first->val << "'s parent is node" << e.second->val << std::endl;
@@ -3323,30 +3323,6 @@ int Solution::minCostConnectPoints(std::vector<std::vector<int>>& points)
 		return std::abs(pointA[0] - pointB[0]) + std::abs(pointA[1] - pointB[1]);
 	};
 	int res = 0;
-#if false
-	// Brute Greedy : TLE
-	int connected_count = 1;
-	std::vector<bool> connected(points.size(), false);
-	connected[0] = true;
-	while (connected_count < points.size()) {
-		int min_distance = INT_MAX;
-		int idx = 0;
-		for (size_t i = 0; i < points.size(); i++) {
-			if (!connected[i]) continue;
-			for (size_t j = 0; j < points.size(); j++) {
-				if (connected[j] || j == i) continue;
-				if (manhattan_distance(points[i], points[j]) < min_distance) {
-					min_distance = manhattan_distance(points[i], points[j]);
-					idx = j;
-				}
-			}
-		}
-		res += min_distance;
-		connected[idx] = true;
-		connected_count++;
-	}
-#elif true
-	// Kruskal's / Union Find
 	struct edge
 	{
 		int v;
@@ -3360,23 +3336,27 @@ int Solution::minCostConnectPoints(std::vector<std::vector<int>>& points)
 			return weight > other.weight;
 		}
 	};
-	std::vector<edge> edges;
+#if false
+	// Kruskal's / Union Find
+	std::priority_queue<edge, std::vector<edge>, std::greater<>> pq;
 	for (size_t i = 0; i + 1 < points.size(); i++)
 	{
 		for (size_t j = i + 1; j < points.size(); j++)
 		{
-			edges.emplace_back(i, j, manhattan_distance(points[i], points[j]));
+			pq.push(edge(i, j, manhattan_distance(points[i], points[j])));
 		}
 	}
-	std::sort(edges.begin(), edges.end());
 
 	//quick union
 	std::vector<int> id(points.size(), 0);
+	std::vector<int> sz(points.size(), 0);
 	for (size_t i = 0; i < points.size(); i++)
 		id[i] = i;
 	auto root = [&](int i) -> int {
-		while (id[i] != i)
+		while (id[i] != i) {
+			id[i] = id[id[i]];
 			i = id[i];
+		}
 		return i;
 	};
 	auto is_connected = [&](int p, int q) -> bool {
@@ -3385,23 +3365,82 @@ int Solution::minCostConnectPoints(std::vector<std::vector<int>>& points)
 	auto connect = [&](int p, int q) -> void {
 		int i = root(p);
 		int j = root(q);
-		id[i] = j;
+		if (sz[i] < sz[j]) {
+			id[i] = j;
+			sz[j] += i;
+		}
+		else {
+			id[j] = i;
+			sz[i] += j;
+		}
 	};
 	int edge_used = 0;
-	for (const auto& e : edges)
+	while (/*!pq.empty() || */edge_used < points.size() - 1)
 	{
+		auto e = pq.top();
+		pq.pop();
 		if (!is_connected(e.v, e.w))
 		{
 			connect(e.v, e.w);
 			res += e.weight;
 			edge_used++;
 		}
-		if (points.size() - 1 == edge_used)
-			break;
-		}
-#else
-	// Prim's
+	}
+#elif false
+	// Prim's algorithm Lazy version
+	std::priority_queue<edge, std::vector<edge>, std::greater<>> pq;
+	std::vector<bool> marked(points.size(), false);
+	int edge_used = 0;
+	marked[0] = true;
+	for (size_t i = 1; i < points.size(); i++)
+		pq.push(edge(0, i, manhattan_distance(points[0], points[i])));
+	while (!pq.empty() && edge_used + 1 < points.size())
+	{
+		while (marked[pq.top().v] && marked[pq.top().w])
+			pq.pop();
+		auto& e = pq.top();
+		res += e.weight;
+		int current = marked[e.v] ? e.w : e.v;
+		pq.pop();
 
+		// visit current
+		marked[current] = true;
+		edge_used++;
+		for (size_t i = 0; i < points.size(); i++)
+			if (!marked[i])
+				pq.push(edge(current, i, manhattan_distance(points[current], points[i])));
+	}
+#else	// Prim's algorithm Lazy version
+	std::vector<bool> marked(points.size(), false);
+	std::vector<int> dist_to(points.size(), 0.0);
+	int edge_used = 0;
+	marked[0] = true;
+	for (size_t i = 1; i < points.size(); i++) {
+		dist_to[i] = manhattan_distance(points[0], points[i]);
+	}
+	while (edge_used + 1 < points.size()) {
+		int current = 0;
+		int distance = INT_MAX;
+
+		// TODO: make dist_to a map?;
+		for (size_t i = 0; i < dist_to.size(); i++)
+		{
+			if (marked[i])
+				continue;
+			if (dist_to[i] < distance) {
+				current = i;
+				distance = dist_to[i];
+			}
+		}
+
+		marked[current] = true;
+		res += distance; 
+		edge_used++;
+
+		for (size_t i = 0; i < points.size(); i++)
+			if (!marked[i])
+				dist_to[i] = std::min(dist_to[i], manhattan_distance(points[current], points[i]));
+	}
 #endif 
 	return res;
 }
@@ -3694,7 +3733,7 @@ std::vector<std::vector<std::string>> Solution::printTree(TreeNode* root)
 	static auto height = make_y_combinator([](auto&& height, TreeNode* node) -> int {
 		if (node == nullptr) return -1;
 		return std::max(height(node->left), height(node->right)) + 1;
-		});
+	});
 	static auto print_helper = make_y_combinator([](auto&& print_helper, TreeNode* root, std::vector<std::vector<std::string>>& grid, int row, int column, int delta_column) -> void {
 		if (nullptr == root)
 			return;
@@ -3703,8 +3742,7 @@ std::vector<std::vector<std::string>> Solution::printTree(TreeNode* root)
 		delta_column >>= 1;
 		print_helper(root->left, grid, row, column - delta_column, delta_column);
 		print_helper(root->right, grid, row, column + delta_column, delta_column);
-		}
-	);
+	});
 	int height_of_root = height(root);
 	std::vector<std::vector<std::string>> result(height_of_root + 1, std::vector<std::string>((1 << (height_of_root + 1)) - 1, ""));
 	print_helper(root, result, 0, (1 << height_of_root) - 1, 1 << height_of_root);
@@ -3823,3 +3861,65 @@ int Solution::maxProductPath(std::vector<std::vector<int>>& grid)
 		max_value %= 1000000007;
 	return max_value;
 }
+
+TreeNode* Solution::convertBST(TreeNode* root)
+{
+	TreeNode* predecessor = nullptr;
+	TreeNode* curr = root;
+	int sum = 0;
+	auto visit = [&](TreeNode*& node) {
+		node->val += sum;
+		sum = node->val; 
+	};
+	while (curr)
+	{
+		if (!curr->right)
+		{
+			visit(curr);
+			std::cout << curr->val << std::endl;
+			curr = curr->left;
+		}
+		else
+		{
+			predecessor = curr->right;
+			while (predecessor->left && predecessor->left != curr)
+				predecessor = predecessor->left;
+			if (predecessor->left == curr) {
+				predecessor->left = nullptr;
+				visit(curr);
+				curr = curr->left;
+			}
+			else
+			{
+				predecessor->left = curr;
+				curr = curr->right;
+			}
+		}
+	}
+	return root;
+}
+
+bool Solution::carPooling(std::vector<std::vector<int>>& trips, int capacity)
+{
+	enum
+	{
+		num_passengers,
+		start_location,
+		end_location
+	};
+	std::map<int, int> passengers_changed;
+	for (const auto& trip : trips)
+	{
+		passengers_changed[trip[start_location]] += trip[num_passengers];
+		passengers_changed[trip[end_location]] -= trip[num_passengers];
+	}
+	int current_num_passengers = 0;
+	for (const auto& e:passengers_changed)
+	{
+		current_num_passengers += e.second;
+		if (capacity < current_num_passengers)
+			return false;
+	}
+	return true;
+}
+
