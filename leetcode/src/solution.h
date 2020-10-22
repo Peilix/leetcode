@@ -127,7 +127,7 @@ public:
     static int maxProfit_1st(std::vector<int>& prices); // leetcode 121
     static int maxProfit_2nd(std::vector<int>& prices); // leetcode 122
     static int maxProfit_3rd(std::vector<int>& prices); // leetcode 123
-    static int maxProfit_4th(std::vector<int>& prices); // leetcode 188
+    static int maxProfit_4th(int k, std::vector<int>& prices); // leetcode 188
     static int maxProfit_5th(std::vector<int>& prices); // leetcode 309
     static std::vector<int> distributeCandies(int candies, int num_people);
     static std::vector<int> numsSameConsecDiff(int N, int K);
@@ -211,5 +211,33 @@ public:
     static int maxProductPath(std::vector<std::vector<int>>& grid);
     static TreeNode* convertBST(TreeNode* root);
     static bool carPooling(std::vector<std::vector<int>>& trips, int capacity);
-private:
+    static int minCameraCover(TreeNode* root);
+    static int distributeCoins(TreeNode* root);
+    static void nextPermutation(std::vector<int>& nums);
+    static int uniquePathsWithObstacles(std::vector<std::vector<int>>& obstacleGrid);
+    static int uniquePathsIII(std::vector<std::vector<int>>& grid);
+    static std::vector<int> majorityElement(std::vector<int>& nums);
+    static int connectTwoGroups(std::vector<std::vector<int>>& cost);
+    static int findKthLargest(std::vector<int>& nums, int k);
+    static std::vector<int> sortArray(std::vector<int>& nums);
+    static int canCompleteCircuit(std::vector<int>& gas, std::vector<int>& cost);
+    static std::vector<int> findMode(TreeNode* root);
+    static std::vector<int> postorderTraversal(TreeNode* root);
+    static char findTheDifference(std::string s, std::string t);
+    static std::string largestNumber(std::vector<int>& nums);
+    static int findPoisonedDuration(std::vector<int>& timeSeries, int duration);
+    static TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q);
+    static int minOperations(std::vector<std::string>& logs);
+    static int minOperationsMaxProfit(std::vector<int>& customers, int boardingCost, int runningCost);
+    static int maximumRequests(int n, std::vector<std::vector<int>>& requests);
+    static std::vector<double> calcEquation(std::vector<std::vector<std::string>>& equations, std::vector<double>& values, std::vector<std::vector<std::string>>& queries);
+    static int findMinArrowShots(std::vector<std::vector<int>>& points);
+    static std::vector<int> findRedundantConnection(std::vector<std::vector<int>>& edges);
+    static std::vector<int> findRedundantDirectedConnection(std::vector<std::vector<int>>& edges);
+    static std::string removeDuplicateLetters(std::string s);
+    static bool buddyStrings(std::string A, std::string B);
+    static std::vector<std::string> commonChars(std::vector<std::string>& A);
+    static bool searchMatrix(std::vector<std::vector<int>>& matrix, int target);
+    static std::vector<int> asteroidCollision(std::vector<int>& asteroids);
+ private:
 };

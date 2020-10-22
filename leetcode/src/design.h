@@ -5,6 +5,7 @@
 
 #include "tree_node.h"
 #include <stack>
+#include <queue>
 
 class Logger {
 private:
@@ -309,23 +310,23 @@ public:
 
 
 class BSTIterator {
-    std::stack<TreeNode*> s;
+    std::stack<TreeNode*> stack_;
 public:
     BSTIterator(TreeNode* root) {
         while (root) {
-            s.push(root);
+            stack_.push(root);
             root = root->left;
         }
     }
 
     /** @return the next smallest number */
     int next() {
-        TreeNode* curr = s.top();
-        s.pop();
+        TreeNode* curr = stack_.top();
+        stack_.pop();
         int result = curr->val;
         curr = curr->right;
         while (curr) {
-            s.push(curr);
+            stack_.push(curr);
             curr = curr->left;
         }
         return result;
@@ -333,7 +334,7 @@ public:
 
     /** @return whether we have a next smallest number */
     bool hasNext() {
-        return s.empty();
+        return stack_.empty();
     }
 };
 
@@ -343,3 +344,220 @@ public:
  * int param_1 = obj->next();
  * bool param_2 = obj->hasNext();
  */
+
+class CBTInserter {
+    TreeNode* root_ = nullptr;
+    std::queue<TreeNode*> queue_;
+public:
+    CBTInserter(TreeNode* root) : root_(root) {
+        queue_.push(root);
+        while (!queue_.empty())
+        {
+            root = queue_.front();
+            if (root->left && root->right) {
+                queue_.pop();
+                queue_.push(root->left);
+                queue_.push(root->right);
+            }
+            else
+                break;
+        }
+    }
+
+    int insert(int v) {
+        TreeNode* new_node = new TreeNode(v);
+        TreeNode* curr = queue_.front();
+        if (curr->left == nullptr) {
+            curr->left = new_node;
+        }
+        else {
+            curr->right = new_node;
+            queue_.pop();
+        }
+        return curr->val;
+    }
+
+    TreeNode* get_root() {
+        return root_;
+    }
+};
+
+/**
+ * Your CBTInserter object will be instantiated and called as such:
+ * CBTInserter* obj = new CBTInserter(root);
+ * int param_1 = obj->insert(v);
+ * TreeNode* param_2 = obj->get_root();
+ */
+
+class ThroneInheritance {
+    struct person
+    {
+        std::string name;
+        bool dead = false;
+        std::vector<person*> children;
+        person(std::string _name) : name(_name) {}
+    };
+    person* king;
+    std::map<std::string, person*> map;
+    std::vector<std::string> inheritanceOrder_;
+
+    void preorderTraversal(person* current) {
+        if (!current->dead)
+            inheritanceOrder_.push_back(current->name);
+        for (const auto& child : current->children)
+        {
+            preorderTraversal(child);
+        }
+    }
+public:
+    ThroneInheritance(std::string kingName) {
+        king = new person(kingName);
+        map[kingName] = king;
+    }
+
+    void birth(std::string parentName, std::string childName) {
+        auto newborn = new person(childName);
+        map[childName] = newborn;
+        map[parentName]->children.push_back(newborn);
+    }
+
+    void death(std::string name) {
+        map[name]->dead = true;
+    }
+
+    std::vector<std::string> getInheritanceOrder() {
+        inheritanceOrder_.clear();
+        preorderTraversal(king);
+        return inheritanceOrder_;
+    }
+};
+
+/**
+ * Your ThroneInheritance object will be instantiated and called as such:
+ * ThroneInheritance* obj = new ThroneInheritance(kingName);
+ * obj->birth(parentName,childName);
+ * obj->death(name);
+ * vector<string> param_3 = obj->getInheritanceOrder();
+ */
+
+class RecentCounter {
+    std::queue<int> q_;
+public:
+    RecentCounter() {
+
+    }
+
+    int ping(int t) {
+        q_.push(t);
+        while (q_.front() < t - 3000)
+        {
+            q_.pop();
+        }
+        return q_.size();
+    }
+};
+
+/**
+ * Your RecentCounter object will be instantiated and called as such:
+ * RecentCounter* obj = new RecentCounter();
+ * int param_1 = obj->ping(t);
+ */
+ /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    std::string serialize(TreeNode* root) {
+        std::vector<std::string> strvec;
+        //level order root
+        {
+            std::queue<TreeNode*> q;
+            q.push(root);
+            while (!q.empty())
+            {
+                TreeNode* curr = q.front();
+                q.pop();
+                if (curr == nullptr)
+                    strvec.push_back("null");
+                else {
+                    strvec.push_back(std::to_string(curr->val));
+                    q.push(curr->left);
+                    q.push(curr->right);
+                }
+            }
+        }
+        std::string result = "[";
+
+        for (auto str : strvec)
+        {
+            result.append(str);
+            result.push_back(',');
+        }
+        result.back() = ']';
+        return result;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(std::string data) {
+        if (data.size() <= 2)
+            return nullptr;
+        auto split = [](const std::string& str, const char& chr) -> std::vector<std::string> {
+            std::vector<std::string> res;
+            auto last = 0;
+            for (size_t i = 0; i < str.length(); i++)
+            {
+                if (str[i] == chr)
+                {
+                    if (last != i)
+                        res.emplace_back(std::string(str.begin() + last, str.begin() + i));
+                    last = i + 1;
+                }
+            }
+            if (last != str.length())
+                res.emplace_back(std::string(str.begin() + last, str.end()));
+            return res;
+        };
+        std::vector<std::string> strvec = split(data, ',');
+        strvec[0].erase(strvec[0].begin());
+        strvec.back().resize(strvec.back().size() - 1);
+        TreeNode dummy;
+        std::queue<TreeNode*> q;
+        q.push(&dummy);
+        bool right = true;
+        for (auto str : strvec)
+        {
+            while (q.front() == nullptr)
+                q.pop();
+            auto parent = q.front();
+            TreeNode* curr = nullptr;
+            if (str != "null")
+                curr = new TreeNode(std::stoi(str));
+            if (right) {
+                parent->right = curr;
+                q.pop();
+            }
+            else
+            {
+                parent->left = curr;
+            }
+            q.push(curr);
+            right = !right;
+        }
+        return dummy.right;
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec* ser = new Codec();
+// Codec* deser = new Codec();
+// string tree = ser->serialize(root);
+// TreeNode* ans = deser->deserialize(tree);
+// return ans;
