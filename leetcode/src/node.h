@@ -5,7 +5,10 @@
 class Node
 {
 public:
-	int val;
+    int val;
+    Node* prev;
+    Node* next;
+    Node* child;
 	std::vector<Node*> neighbors;
 
 	Node() {

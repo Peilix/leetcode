@@ -5,6 +5,9 @@
 #include <cassert>
 #include <iostream>
 
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#include <stdlib.h>
 int Solution::twoCitySchedCost(std::vector<std::vector<int>>& costs)
 {
     int res = 0;
@@ -39,7 +42,7 @@ std::vector<std::vector<int>> Solution::reconstructQueue(std::vector<std::vector
 {
     std::vector<std::vector<int>> res;
     int k = 0;
-    std::sort(people.begin(), people.end(), [](std::vector<int> A, std::vector<int> B) { if (A.back() != B.back()) return A.back() < B.back(); return A.front() > B.front(); });
+    std::sort(people.begin(), people.end(), [](const std::vector<int>& lhs, const std::vector<int>& rhs) { if (lhs.back() != rhs.back()) return lhs.back() < rhs.back(); return lhs.front() > rhs.front(); });
     size_t i = 0;
     while (i < people.size()) {
         int j = 0;
@@ -834,33 +837,31 @@ ListNode* Solution::mergeTwoLists(ListNode* l1, ListNode* l2)
         return l2;
     }
 #else
-    ListNode* sentinel = new ListNode();
-    ListNode* res = sentinel;
+    ListNode sentinel;
+    ListNode* curr = &sentinel;
     while (l1 && l2) {
         if (l1->val < l2->val) {
-            res->next = l1;
+            curr->next = l1;
             l1 = l1->next;
         } else {
-            res->next = l2;
+            curr->next = l2;
             l2 = l2->next;
         }
-        res = res->next;
+        curr = curr->next;
     }
     if (l1)
-        res->next = l1;
+        curr->next = l1;
     else
-        res->next = l2;
-    res = sentinel->next;
-    delete sentinel;
-    return res;
+        curr->next = l2;
+    return sentinel.next;
 #endif // recursive
 }
 
 ListNode* Solution::mergeKLists(std::vector<ListNode*>& lists)
 {
     // or use mergeTwoLists
-    ListNode* sentinel = new ListNode();
-    ListNode* res = sentinel;
+    ListNode sentinel;
+    ListNode* curr = &sentinel;
     while (!lists.empty()) {
         int min = INT_MAX;
         for (size_t i = 0; i < lists.size(); i++) {
@@ -873,16 +874,14 @@ ListNode* Solution::mergeKLists(std::vector<ListNode*>& lists)
         }
         for (size_t i = 0; i < lists.size(); i++) {
             if (lists[i] && lists[i]->val == min) {
-                res->next = lists[i];
+                curr->next = lists[i];
                 lists[i] = lists[i]->next;
                 break;
             }
         }
-        res = res->next;
+        curr = curr->next;
     }
-    res = sentinel->next;
-    delete sentinel;
-    return res;
+    return sentinel.next;
 }
 
 std::vector<std::string> Solution::wordBreak(std::string s, std::vector<std::string>& wordDict)
@@ -1203,10 +1202,10 @@ std::vector<std::vector<int>> Solution::verticalTraversal(TreeNode* root)
             q.push(std::make_pair(node->right, std::make_pair(x + 1, y + 1)));
     }
     for (auto& e : map)
-        std::sort(e.second.begin(), e.second.end(), [](std::pair<int, int> A, std::pair<int, int> B) {
-            if (A.second != B.second)
-                return A.second < B.second;
-            return A.first < B.first;
+        std::sort(e.second.begin(), e.second.end(), [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs) {
+            if (lhs.second != rhs.second)
+                return lhs.second < rhs.second;
+            return lhs.first < rhs.first;
         });
     for (auto& e : map) {
         std::vector<int> temp;
@@ -1663,6 +1662,7 @@ int Solution::maxProfit_3rd(std::vector<int>& prices)
     return max_profit;
 }
 
+// TODO:
 int Solution::maxProfit_4th(int k, std::vector<int>& prices)
 {
     size_t left = 0, right = 1;
@@ -4002,20 +4002,15 @@ char Solution::findTheDifference(std::string s, std::string t)
 
 std::string Solution::largestNumber(std::vector<int>& nums)
 {
-    auto greater_prefix = [](std::string num1, std::string num2) {
-        std::string n12 = num1 + num2;
-        std::string n21 = num2 + num1;
-        return n12 > n21;
-    };
     std::vector<std::string> num_strs;
     for (auto num : nums) {
         num_strs.emplace_back(std::to_string(num));
     }
-    std::sort(num_strs.begin(), num_strs.end(), greater_prefix);
-    std::string result;
+    std::sort(num_strs.begin(), num_strs.end(), [](const auto& lhs, const auto& rhs) { return lhs + rhs > rhs + lhs; });
+    std::string ret;
     for (const auto& num : num_strs)
-        result.append(num);
-    return result;
+        ret.append(num);
+    return ret;
 }
 
 int Solution::findPoisonedDuration(std::vector<int>& timeSeries, int duration)
@@ -4283,4 +4278,165 @@ std::vector<int> Solution::asteroidCollision(std::vector<int>& asteroids)
         }
     }
     return stk;
+}
+
+bool Solution::find132pattern(std::vector<int>& nums)
+{
+    if (nums.size() < 3)
+        return false;
+    std::vector<int> min(nums.size());
+    int min_value = nums[0];
+    for (size_t i = 0; i < nums.size() - 1; i++) {
+        if (nums[i] < min_value)
+            min_value = nums[i];
+        min[i + 1] = min_value;
+    }
+
+    std::stack<int> stk;
+    stk.push(nums.back());
+    for (int j = nums.size() - 2; j >= 1; j--) {
+        if (min[j] < nums[j]) {
+            while (!stk.empty() && stk.top() <= min[j]) {
+                stk.pop();
+            }
+            if (!stk.empty() && stk.top() < nums[j]) {
+                return true;
+            }
+            // stk.empty() || stk.top() >= nums[j]
+            stk.push(nums[j]);
+        }
+    }
+    return false;
+}
+
+bool Solution::winnerSquareGame(int n)
+{
+    std::vector<bool> dp(n + 1);
+    dp[0] = false;
+    dp[1] = true;
+    for (size_t i = 2; i < n + 1; i++) {
+        auto sqt = static_cast<int>(std::sqrt(i));
+        if (sqt * sqt == i) {
+            dp[i] = true;
+            continue;
+        }
+
+        for (size_t j = 1; j <= sqt; j++) {
+            if (!dp[i - j * j]) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+    return dp.back();
+}
+
+double Solution::champagneTower(int poured, int query_row, int query_glass)
+{
+    size_t height = query_row + 2;
+    std::vector<std::vector<float>> tower(height, std::vector<float>(height, 0.0f));
+    tower[0][0] = static_cast<float>(poured);
+    float tmp = 0.0f;
+    for (size_t i = 0; i <= query_row; i++) {
+        for (size_t j = 0; j <= i; j++) {
+            if (1.0f < tower[i][j]) {
+                tmp = tower[i][j] - 1.0f;
+                tower[i][j] = 1.0f;
+                tower[i + 1][j] += tmp / 2.0f;
+                tower[i + 1][j + 1] += tmp / 2.0f;
+            }
+        }
+    }
+    return static_cast<double>(tower[query_row][query_glass]);
+}
+
+int Solution::longestConsecutive(std::vector<int>& nums)
+{
+    std::unordered_map<int, int> hashmap;
+    int ret = 0;
+    for (auto&& num : nums) {
+        if (hashmap.find(num) != hashmap.end())
+            continue;
+        hashmap[num] = 1;
+        if (INT_MIN < num && hashmap.find(num - 1) != hashmap.end())
+            hashmap[num] += hashmap[num - 1];
+        if (num < INT_MAX && hashmap.find(num + 1) != hashmap.end())
+            hashmap[num] += hashmap[num + 1];
+        // update
+        if (INT_MIN < num && hashmap.find(num - 1) != hashmap.end())
+            hashmap[num - hashmap[num - 1]] = hashmap[num];
+        if (num < INT_MAX && hashmap.find(num + 1) != hashmap.end())
+            hashmap[num + hashmap[num + 1]] = hashmap[num];
+        ret = std::max(ret, hashmap[num]);
+    }
+    return ret;
+}
+
+ListNode* Solution::detectCycle(ListNode* head)
+{
+    ListNode* fast = head;
+    ListNode* slow = head;
+    while (fast != nullptr && fast->next != nullptr) {
+        fast = fast->next->next;
+        slow = slow->next;
+        if (fast == slow) {
+            while (head != slow) {
+                head = head->next;
+                slow = slow->next;
+            }
+            return head;
+        }
+    }
+    return nullptr;
+
+    std::unordered_map<ListNode*, bool> hash_map;
+    while (head != nullptr) {
+        if (hash_map.find(head) != hash_map.end())
+            return head;
+        else
+            hash_map[head] = true;
+        head = head->next;
+    }
+    return nullptr;
+}
+
+void Solution::flatten(TreeNode* root)
+{
+    while (root != nullptr) {
+        if (root->left == nullptr) {
+            root = root->right;
+        } else {
+            TreeNode* pred = root->left;
+            while (pred->right != nullptr)
+                pred = pred->right;
+            pred->right = root->right;
+            root->right = root->left;
+            root->left = nullptr;
+            root = root->right;
+        }
+    }
+}
+
+Node* Solution::flatten(Node* head)
+{
+    Node* curr = head;
+    while (curr) {
+        if (curr->child == nullptr) {
+            curr = curr->next;
+        } else {
+            Node* pred = curr->child;
+            pred->prev = curr;
+            while (pred->next != nullptr)
+                pred = pred->next;
+            pred->next = curr->next;
+            // caution here
+            if (curr->next != nullptr)
+                curr->next->prev = pred;
+            curr->next = curr->child;
+            curr->child->prev = curr;
+            curr->child = nullptr;
+            curr = curr->next;
+        }
+    }
+    return head;
 }

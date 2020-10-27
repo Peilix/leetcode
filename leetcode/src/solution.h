@@ -239,5 +239,13 @@ public:
     static std::vector<std::string> commonChars(std::vector<std::string>& A);
     static bool searchMatrix(std::vector<std::vector<int>>& matrix, int target);
     static std::vector<int> asteroidCollision(std::vector<int>& asteroids);
+    static bool find132pattern(std::vector<int>& nums);
+    static bool winnerSquareGame(int n);
+    static double champagneTower(int poured, int query_row, int query_glass);
+    static int longestConsecutive(std::vector<int>& nums);
+    static ListNode* detectCycle(ListNode* head);
+    static void flatten(TreeNode* root);
+    static Node* flatten(Node* head);
+
  private:
 };

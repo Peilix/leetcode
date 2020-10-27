@@ -7,6 +7,11 @@
 #include <stack>
 #include <queue>
 
+// memleak dec
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#include <stdlib.h>
+
 class Logger {
 private:
 	std::unordered_map<std::string, int> umap;
@@ -93,58 +98,66 @@ public:
     /** Initialize your data structure here. */
     struct TrieNode
     {
-        std::map<char, TrieNode*> children;
+        std::map<char, TrieNode*> children_;
         bool is_end = false;
     };
     Trie() {
-        root = new TrieNode();
+        root_ = new TrieNode();
     }
     ~Trie() {
-        if (root->children.empty())
-            delete root;
+        destory(root_);
     }
 
     /** Inserts a word into the trie. */
     void insert(std::string word) {
-        TrieNode* curr = root;
+        TrieNode* curr = root_;
         for (auto letter : word)
         {
-            if (curr->children.find(letter) == curr->children.end()) {
-                curr->children[letter] = new TrieNode();
+            if (curr->children_.find(letter) == curr->children_.end()) {
+                curr->children_[letter] = new TrieNode();
             }
-            curr = curr->children[letter];
+            curr = curr->children_[letter];
         }
         curr->is_end = true;
     }
 
     /** Returns if the word is in the trie. */
     bool search(std::string word) {
-        TrieNode* curr = root;
+        TrieNode* curr = root_;
         for (auto letter : word)
         {
-            if (curr->children.find(letter) == curr->children.end()) {
+            if (curr->children_.find(letter) == curr->children_.end()) {
                 return false;
             }
-            curr = curr->children[letter];
+            curr = curr->children_[letter];
         }
         return curr->is_end;
     }
 
     /** Returns if there is any word in the trie that starts with the given prefix. */
     bool startsWith(std::string prefix) {
-        TrieNode* curr = root;
+        TrieNode* curr = root_;
         for (auto letter : prefix)
         {
-            if (curr->children.find(letter) == curr->children.end()) {
+            if (curr->children_.find(letter) == curr->children_.end()) {
                 return false;
             }
-            curr = curr->children[letter];
+            curr = curr->children_[letter];
         }
         return true;
     }
 
 private:
-    TrieNode* root;
+    TrieNode* root_;
+
+    void destory(TrieNode* root)
+    {
+        auto children = root->children_;
+        delete root;
+        for (const auto& child : children) {
+            destory(child.second);
+        }
+    }
 };
 
 /**
@@ -158,32 +171,36 @@ private:
 class WordDictionary {
     struct TrieNode
     {
-        std::map<char, TrieNode*> children;
+        std::map<char, TrieNode*> children_;
         bool is_end = false;
     };
-    TrieNode* root;
+    TrieNode* root_;
 public:
     /** Initialize your data structure here. */
     WordDictionary() {
-        root = new TrieNode();
+        root_ = new TrieNode();
+    }
+
+    ~WordDictionary() {
+        destory(root_);
     }
 
     /** Adds a word into the data structure. */
     void addWord(std::string word) {
-        TrieNode* curr = root;
+        TrieNode* curr = root_;
         for (auto letter : word)
         {
-            if (curr->children.find(letter) == curr->children.end()) {
-                curr->children[letter] = new TrieNode();
+            if (curr->children_.find(letter) == curr->children_.end()) {
+                curr->children_[letter] = new TrieNode();
             }
-            curr = curr->children[letter];
+            curr = curr->children_[letter];
         }
         curr->is_end = true;
     }
 
     /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
     bool search(std::string word) {
-        return searchRecursive(root, word, 0);
+        return searchRecursive(root_, word, 0);
     }
 private:
     bool searchRecursive(TrieNode* curr, std::string& word, size_t index) {
@@ -192,17 +209,26 @@ private:
         char letter = word[index];
         if (letter == '.')
         {
-            for (const auto& e: curr->children)
+            for (const auto& e: curr->children_)
                 if (searchRecursive(e.second, word, index + 1))
                     return true;
         }
         else
         {
-            if (curr->children.find(letter) == curr->children.end())
+            if (curr->children_.find(letter) == curr->children_.end())
                 return false;
-            return searchRecursive(curr->children[letter], word, index + 1);
+            return searchRecursive(curr->children_[letter], word, index + 1);
         }
         return false;
+    }
+
+    void destory(TrieNode* root)
+    {
+        auto children = root->children_;
+        delete root;
+        for (const auto& child : children) {
+            destory(child.second);
+        }
     }
 };
 
@@ -473,7 +499,7 @@ public:
   */
 class Codec {
 public:
-
+    int a = 99;
     // Encodes a tree to a single string.
     std::string serialize(TreeNode* root) {
         std::vector<std::string> strvec;
