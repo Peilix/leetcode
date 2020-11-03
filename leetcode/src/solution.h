@@ -246,6 +246,12 @@ public:
     static ListNode* detectCycle(ListNode* head);
     static void flatten(TreeNode* root);
     static Node* flatten(Node* head);
-
+    static std::vector<std::string> summaryRanges(std::vector<int>& nums);
+    static int maxDistToClosest(std::vector<int>& seats);
+    static int sumNumbers(TreeNode* root);
+    static int lengthOfLIS(std::vector<int>& nums);
+    static int findNumberOfLIS(std::vector<int>& nums);
+    static int minimumEffortPath(std::vector<std::vector<int>>& heights);
+    static ListNode* insertionSortList(ListNode* head);
  private:
 };

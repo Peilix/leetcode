@@ -499,7 +499,6 @@ public:
   */
 class Codec {
 public:
-    int a = 99;
     // Encodes a tree to a single string.
     std::string serialize(TreeNode* root) {
         std::vector<std::string> strvec;

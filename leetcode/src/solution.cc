@@ -25,7 +25,7 @@ int Solution::twoCitySchedCost(std::vector<std::vector<int>>& costs)
         mmap.insert({ abs(pair[0] - pair[1]), pair });
     }
     int i = 0, j = 0;
-    for (auto& e : mmap) {
+    for (auto&& e : mmap) {
         if ((count >> 1) <= i)
             res += e.second[1];
         else if ((count >> 1) <= j)
@@ -580,7 +580,7 @@ std::vector<int> Solution::topKFrequent(std::vector<int>& nums, int k)
     for (auto num : nums) {
         hash[num]++;
     }
-    for (auto& e : hash) {
+    for (auto&& e : hash) {
         mmap.insert({ e.second, e.first });
     }
     for (auto it = mmap.begin(); k--; it++) {
@@ -777,9 +777,9 @@ int Solution::leastInterval(std::vector<char>& tasks, int n)
     std::unordered_map<char, int> hash;
     int res = 0;
     int a = 0, b = 0;
-    for (auto& task : tasks)
+    for (auto&& task : tasks)
         hash[task]++;
-    for (auto& e : hash)
+    for (auto&& e : hash)
         if (a < e.second)
             a = e.second, b = 1;
         else if (a == e.second)
@@ -922,11 +922,11 @@ std::string Solution::getHint(std::string secret, std::string guess)
         }
     }
     std::unordered_map<char, int> map_secret, map_guess;
-    for (auto& chr : secret)
+    for (auto&& chr : secret)
         map_secret[chr]++;
-    for (auto& chr : guess)
+    for (auto&& chr : guess)
         map_guess[chr]++;
-    for (auto& e : map_secret)
+    for (auto&& e : map_secret)
         if (map_guess[e.first])
             cows_count += e.second < map_guess[e.first] ? e.second : map_guess[e.first];
     std::string hint;
@@ -936,7 +936,7 @@ std::string Solution::getHint(std::string secret, std::string guess)
 bool Solution::detectCapitalUse(std::string word)
 {
     if ('Z' < word[0]) {
-        for (auto& letter : word)
+        for (auto&& letter : word)
             if (letter <= 'Z')
                 return false;
     } else {
@@ -1024,14 +1024,14 @@ int Solution::minSwaps(std::vector<std::vector<int>>& grid)
 int Solution::maxSum(std::vector<int>& nums1, std::vector<int>& nums2)
 {
     std::unordered_map<int, bool> umap1, umap2;
-    for (auto& num : nums1) {
+    for (auto&& num : nums1) {
         umap1[num] = true;
     }
-    for (auto& num : nums2) {
+    for (auto&& num : nums2) {
         umap2[num] = true;
     }
     std::vector<int> nums_common;
-    for (auto& e : umap1) {
+    for (auto&& e : umap1) {
         if (umap2[e.first] == true)
             nums_common.push_back(e.first);
     }
@@ -1201,15 +1201,15 @@ std::vector<std::vector<int>> Solution::verticalTraversal(TreeNode* root)
         if (node->right)
             q.push(std::make_pair(node->right, std::make_pair(x + 1, y + 1)));
     }
-    for (auto& e : map)
+    for (auto&& e : map)
         std::sort(e.second.begin(), e.second.end(), [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs) {
             if (lhs.second != rhs.second)
                 return lhs.second < rhs.second;
             return lhs.first < rhs.first;
         });
-    for (auto& e : map) {
+    for (auto&& e : map) {
         std::vector<int> temp;
-        for (auto& pair : e.second)
+        for (auto&& pair : e.second)
             temp.push_back(pair.first);
         res.push_back(temp);
     }
@@ -1450,7 +1450,7 @@ Node* Solution::cloneGraph(Node* node)
     std::vector<Node*> neighbors;
     Node* res = new Node(node->val);
     map[node] = res;
-    for (auto& neighbor : node->neighbors) {
+    for (auto&& neighbor : node->neighbors) {
         if (map.count(neighbor) == 0)
             map[neighbor] = cloneGraph(neighbor);
         neighbors.push_back(map[neighbor]);
@@ -1620,7 +1620,7 @@ int Solution::maxProfit_1st(std::vector<int>& prices)
 {
     int min_price = INT_MAX;
     int max_profit = 0;
-    for (auto& price : prices) {
+    for (auto&& price : prices) {
         if (price < min_price)
             min_price = price;
         if (max_profit < price - min_price)
@@ -2353,7 +2353,7 @@ int Solution::getMaxLen(std::vector<int>& nums)
 {
     auto helper = [](std::vector<int>& nums) -> int {
         auto temp = 1;
-        for (auto& num : nums) {
+        for (auto&& num : nums) {
             temp *= std::abs(num) / num;
         }
         if (temp == 1)
@@ -2375,7 +2375,7 @@ int Solution::getMaxLen(std::vector<int>& nums)
     }
     withoutzero.push_back(std::vector<int>(nums.begin() + start, nums.end()));
     int res = 0;
-    for (auto& interval : withoutzero)
+    for (auto&& interval : withoutzero)
         res = std::max(helper(interval), res);
     return res;
 }
@@ -2572,7 +2572,7 @@ bool Solution::containsNearbyAlmostDuplicate(std::vector<int>& nums, int k, int 
     std::map<int, std::vector<int>> map;
     for (size_t i = 0; i < nums.size(); i++)
         map[nums[i]].push_back(i);
-    for (auto& e : map)
+    for (auto&& e : map)
         for (size_t i = 0; i < e.second.size(); i++)
             for (size_t minus = 0; minus <= t; minus++)
                 for (size_t j = 0; j < map[e.first + minus].size(); j++)
@@ -2985,7 +2985,7 @@ std::vector<int> Solution::distanceK(TreeNode* root, TreeNode* target, int K)
         }
     });
     dfs(root, target);
-    for (auto& e : umap)
+    for (auto&& e : umap)
         std::cout << "node " << e.first->val << "'s parent is node" << e.second->val << std::endl;
     std::vector<int> res;
 
@@ -3598,12 +3598,12 @@ std::string Solution::reorderSpaces(std::string text)
     std::string res;
     std::vector<std::string> words = split(text, ' ');
     int len = text.length();
-    for (auto& word : words)
+    for (auto&& word : words)
         len -= word.length();
     int per = len;
     if (1 < words.size())
         per /= words.size() - 1;
-    for (auto& word : words) {
+    for (auto&& word : words) {
         res.append(word);
         for (size_t i = 0; i < per; i++)
             res.push_back(' ');
@@ -4439,4 +4439,153 @@ Node* Solution::flatten(Node* head)
         }
     }
     return head;
+}
+
+std::vector<std::string> Solution::summaryRanges(std::vector<int>& nums)
+{
+    if (nums.empty())
+        return std::vector<std::string>();
+    int last = 0;
+    int left = 0;
+    bool flag = false;
+    std::string tmp;
+    std::vector<std::string> ret;
+    for (auto num : nums) {
+        if (!flag) {
+            tmp = std::to_string(num);
+            left = num;
+            flag = true;
+        } else {
+            if (num <= last + 1) {
+            } else {
+                if (last == left) {
+                } else {
+                    tmp.append("->");
+                    tmp.append(std::to_string(last));
+                }
+                ret.emplace_back(tmp);
+
+                tmp = std::to_string(num);
+                left = num;
+            }
+        }
+        last = num;
+    }
+    if (last == left) {
+    } else {
+        tmp.append("->");
+        tmp.append(std::to_string(last));
+    }
+    ret.emplace_back(tmp);
+
+    return ret;
+}
+
+int Solution::maxDistToClosest(std::vector<int>& seats)
+{
+    std::vector<size_t> seated;
+    for (size_t i = 0; i < seats.size(); i++) {
+        if (1 == seats[i])
+            seated.push_back(i);
+    }
+    size_t ret = 0;
+    for (size_t i = 1; i < seated.size(); i++) {
+        ret = std::max(seated[i] - seated[i - 1], ret);
+    }
+    assert(!seated.empty());
+    ret /= 2;
+    ret = std::max(seated[0] - 0, ret);
+    ret = std::max(seats.size() - 1 - seated.back(), ret);
+    return ret;
+}
+
+int Solution::sumNumbers(TreeNode* root)
+{
+    int ret = 0;
+    auto dfs = make_y_combinator([&](auto&& dfs, TreeNode* node, int prefix) -> void {
+        if (node == nullptr)
+            return;
+        prefix = prefix * 10 + node->val;
+        if (node->left == nullptr && node->right == nullptr)
+            ret += prefix;
+        else {
+            dfs(node->left, prefix);
+            dfs(node->right, prefix);
+        }
+    });
+    dfs(root, 0);
+    return ret;
+}
+
+int Solution::lengthOfLIS(std::vector<int>& nums)
+{
+    if (nums.empty())
+        return 0;
+    std::vector<int> length(nums.size(), 1);
+    for (size_t i = 1; i < length.size(); i++) {
+        for (int j = i - 1; 0 <= j; j--) {
+            if (nums[j] < nums[i]) {
+                length[i] = std::max(length[i], length[j] + 1);
+            }
+        }
+    }
+    int ret = 0;
+    for (auto n : length)
+        ret = std::max(n, ret);
+    return ret;
+}
+
+int Solution::findNumberOfLIS(std::vector<int>& nums)
+{
+    if (nums.empty())
+        return 0;
+    std::vector<int> length(nums.size(), 1);
+    std::vector<int> count(nums.size(), 1);
+    for (size_t i = 1; i < length.size(); i++) {
+        for (int j = i - 1; 0 <= j; j--) {
+            if (nums[j] < nums[i]) {
+                if (length[i] < length[j] + 1) {
+                    length[i] = length[j] + 1;
+                    count[i] = count[j];
+                } else if (length[j] + 1 == length[i]) {
+                    count[i] += count[j];
+                }
+            }
+        }
+    }
+    int max_len = 0;
+    int ret = 0;
+    for (auto n : length)
+        max_len = std::max(n, max_len);
+    for (size_t i = 0; i < length.size(); i++) {
+        if (length[i] == max_len)
+            ret += count[i];
+    }
+    return ret;
+}
+
+ListNode* Solution::insertionSortList(ListNode* head)
+{
+    if (head == nullptr)
+        return head;
+    ListNode dummy(INT_MIN);
+
+    ListNode* prev = &dummy;
+    ListNode* curr = head;
+
+    while (curr != nullptr) {
+        auto next = curr->next;
+
+        if (curr->val < prev->val)
+            prev = &dummy;
+        while (prev->next != nullptr && prev->next->val <= curr->val)
+            prev = prev->next;
+
+        curr->next = prev->next;
+        prev->next = curr;
+
+        curr = next;
+    }
+
+    return dummy.next;
 }
