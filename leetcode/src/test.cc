@@ -129,10 +129,12 @@ TEST(Leetcode, 1293_Shortest_Path_in_a_Grid_with_Obstacles_Elimination)
 	};
 	int k = 1;
 	EXPECT_EQ(6, solution.shortestPath(grid, k));
+
 	grid = std::vector<std::vector<int> >(
 		{ { 0, 1, 1 }, { 1, 1, 1 }, { 1, 0, 0 } });
 	k = 1;
 	EXPECT_EQ(-1, solution.shortestPath(grid, k));
+
 	grid = std::vector<std::vector<int> >(
 		{ { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
@@ -148,121 +150,122 @@ TEST(Leetcode, 1293_Shortest_Path_in_a_Grid_with_Obstacles_Elimination)
 		  { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 } });
 	k = 1;
 	EXPECT_EQ(20, solution.shortestPath(grid, k));
-	//grid =
-	//	std::vector<std::vector<int> >(
-	//		{ { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	//		  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	//		    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	//		  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	//		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } });
-	//k = 5;
-	//EXPECT_EQ(20, solution.shortestPath(grid, k));
+
+	grid =
+		std::vector<std::vector<int> >(
+			{ { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			  { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+			    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } });
+	k = 5;
+	EXPECT_EQ(387, solution.shortestPath(grid, k));
 }
 
 TEST(Leetcode, 53_Maximum_Subarray)
@@ -1095,6 +1098,210 @@ TEST(Leetcode, 222_Count_Complete_Tree_Nodes)
 	output = 1;
 	EXPECT_EQ(output, solution.countNodes(root));
 	tree_builder.destoryTree(root);
+}
+
+TEST(Leetcode, 1246_Palindrome_Removal)
+{
+	std::vector<int> arr{ 1, 2 };
+	int output = 2;
+	EXPECT_EQ(output, solution.minimumMoves(arr));
+
+	arr = { 1, 3, 4, 1, 5 };
+	output = 3;
+	EXPECT_EQ(output, solution.minimumMoves(arr));
+}
+
+TEST(Leetcode, 980_Unique_Paths_III)
+{
+	std::vector<std::vector<int> > grid{ { 1, 0, 0, 0 },
+					     { 0, 0, 0, 0 },
+					     { 0, 0, 2, -1 } };
+	EXPECT_EQ(2, solution.uniquePathsIII(grid));
+
+	grid = { { 1, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 2 } };
+	EXPECT_EQ(4, solution.uniquePathsIII(grid));
+
+	grid = { { 0, 1 }, { 1, 0 } };
+	EXPECT_EQ(0, solution.uniquePathsIII(grid));
+}
+
+TEST(Leetcode, 41_First_Missing_Positive)
+{
+	std::vector<int> nums{ 1, 2, 0 };
+	EXPECT_EQ(3, solution.firstMissingPositive(nums));
+
+	nums = { 3, 4, -1, 1 };
+	EXPECT_EQ(2, solution.firstMissingPositive(nums));
+
+	nums = { 7, 8, 9, 11, 12 };
+	EXPECT_EQ(1, solution.firstMissingPositive(nums));
+
+	nums = { 1 };
+	EXPECT_EQ(2, solution.firstMissingPositive(nums));
+
+	nums = { 1, 1 };
+	EXPECT_EQ(2, solution.firstMissingPositive(nums));
+
+	nums = { 2, 1 };
+	EXPECT_EQ(3, solution.firstMissingPositive(nums));
+}
+
+TEST(Leetcode, 797_All_Paths_From_Source_to_Target)
+{
+	std::vector<std::vector<int> > graph{ { 1, 2 }, { 3 }, { 3 }, {} };
+	std::vector<std::vector<int> > output{ { 0, 1, 3 }, { 0, 2, 3 } };
+	EXPECT_EQ(output, solution.allPathsSourceTarget(graph));
+
+	graph = { { 4, 3, 1 }, { 3, 2, 4 }, { 3 }, { 4 }, {} };
+	output = { { 0, 4 },
+		   { 0, 3, 4 },
+		   { 0, 1, 3, 4 },
+		   { 0, 1, 2, 3, 4 },
+		   { 0, 1, 4 } };
+	EXPECT_EQ(output, solution.allPathsSourceTarget(graph));
+
+	graph = { { 1 }, {} };
+	output = { { 0, 1 } };
+	EXPECT_EQ(output, solution.allPathsSourceTarget(graph));
+
+	graph = { { 1, 2, 3 }, { 2 }, { 3 }, {} };
+	output = { { 0, 1, 2, 3 }, { 0, 2, 3 }, { 0, 3 } };
+	EXPECT_EQ(output, solution.allPathsSourceTarget(graph));
+
+	graph = { { 1, 3 }, { 2 }, { 3 }, {} };
+	output = { { 0, 1, 2, 3 }, { 0, 3 } };
+	EXPECT_EQ(output, solution.allPathsSourceTarget(graph));
+}
+
+TEST(Leetcode, 721_Accounts_Merge)
+{
+	std::vector<std::vector<std::string> > accounts{
+		{ "John", "johnsmith@mail.com", "john_newyork@mail.com" },
+		{ "John", "johnsmith@mail.com", "john00@mail.com" },
+		{ "Mary", "mary@mail.com" },
+		{ "John", "johnnybravo@mail.com" }
+	};
+	std::vector<std::vector<std::string> > output{
+		{ "John", "john00@mail.com", "john_newyork@mail.com",
+		  "johnsmith@mail.com" },
+		{ "Mary", "mary@mail.com" },
+		{ "John", "johnnybravo@mail.com" }
+	};
+	EXPECT_EQ(output, solution.accountsMerge(accounts));
+
+	accounts = { { "Gabe", "Gabe0@m.co", "Gabe3@m.co", "Gabe1@m.co" },
+		     { "Kevin", "Kevin3@m.co", "Kevin5@m.co", "Kevin0@m.co" },
+		     { "Ethan", "Ethan5@m.co", "Ethan4@m.co", "Ethan0@m.co" },
+		     { "Hanzo", "Hanzo3@m.co", "Hanzo1@m.co", "Hanzo0@m.co" },
+		     { "Fern", "Fern5@m.co", "Fern1@m.co", "Fern0@m.co" } };
+	output = { { "Ethan", "Ethan0@m.co", "Ethan4@m.co", "Ethan5@m.co" },
+		   { "Gabe", "Gabe0@m.co", "Gabe1@m.co", "Gabe3@m.co" },
+		   { "Hanzo", "Hanzo0@m.co", "Hanzo1@m.co", "Hanzo3@m.co" },
+		   { "Kevin", "Kevin0@m.co", "Kevin3@m.co", "Kevin5@m.co" },
+		   { "Fern", "Fern0@m.co", "Fern1@m.co", "Fern5@m.co" } };
+	EXPECT_EQ(output, solution.accountsMerge(accounts));
+}
+
+TEST(Leetcode, 1306_Jump_Game_III)
+{
+	std::vector<int> arr{ 4, 2, 3, 0, 3, 1, 2 };
+	int start{ 5 };
+	EXPECT_EQ(true, solution.canReach(arr, start));
+
+	arr = { 4, 2, 3, 0, 3, 1, 2 }, start = 0;
+	EXPECT_EQ(true, solution.canReach(arr, start));
+
+	arr = { 3, 0, 2, 1, 2 }, start = 2;
+	EXPECT_EQ(false, solution.canReach(arr, start));
+}
+
+TEST(Leetcode, 878_Nth_Magical_Number)
+{
+	int n = 1, a = 2, b = 3;
+	EXPECT_EQ(2, solution.nthMagicalNumber(n, a, b));
+	n = 4, a = 2, b = 3;
+	EXPECT_EQ(6, solution.nthMagicalNumber(n, a, b));
+	n = 5, a = 2, b = 4;
+	EXPECT_EQ(10, solution.nthMagicalNumber(n, a, b));
+	n = 3, a = 6, b = 4;
+	EXPECT_EQ(8, solution.nthMagicalNumber(n, a, b));
+}
+
+TEST(Leetcode, 210_Course_Schedule_II)
+{
+	int numCourses = 2;
+	std::vector<std::vector<int> > prerequisites{ { 1, 0 } };
+	std::vector<int> output{ 0, 1 };
+	EXPECT_EQ(output, solution.findOrder(numCourses, prerequisites));
+
+	numCourses = 4,
+	prerequisites = { { 1, 0 }, { 2, 0 }, { 3, 1 }, { 3, 2 } };
+	output = { 0, 2, 1, 3 };
+	output = { 0, 1, 2, 3 };
+	EXPECT_EQ(output, solution.findOrder(numCourses, prerequisites));
+
+	numCourses = 1, prerequisites = {};
+	output = { 0 };
+	EXPECT_EQ(output, solution.findOrder(numCourses, prerequisites));
+
+	numCourses = 3, prerequisites = { { 0, 1 }, { 0, 2 }, { 1, 2 } };
+	output = { 2, 1, 0 };
+	EXPECT_EQ(output, solution.findOrder(numCourses, prerequisites));
+
+	numCourses = 3, prerequisites = { { 1, 0 }, { 1, 2 }, { 0, 1 } };
+	output = {};
+	EXPECT_EQ(output, solution.findOrder(numCourses, prerequisites));
+}
+
+TEST(Leetcode, 1871_Jump_Game_VII)
+{
+	std::string s = "011010";
+	int minJump = 2;
+	int maxJump = 3;
+	EXPECT_EQ(true, solution.canReach(s, minJump, maxJump));
+
+	s = "01101110";
+	minJump = 2;
+	maxJump = 3;
+	EXPECT_EQ(false, solution.canReach(s, minJump, maxJump));
+
+	s = "01";
+	minJump = 1;
+	maxJump = 1;
+	EXPECT_EQ(false, solution.canReach(s, minJump, maxJump));
+
+	s = "00111010";
+	minJump = 3;
+	maxJump = 5;
+	EXPECT_EQ(false, solution.canReach(s, minJump, maxJump));
+
+	s = "0000000000";
+	minJump = 2;
+	maxJump = 5;
+	EXPECT_EQ(true, solution.canReach(s, minJump, maxJump));
+}
+
+TEST(Leetcode, 2151_Maximum_Good_People_Based_on_Statements)
+{
+	std::vector<std::vector<int> > statements{ { 2, 1, 2 },
+						   { 1, 2, 2 },
+						   { 2, 0, 2 } };
+	EXPECT_EQ(2, solution.maximumGood(statements));
+
+	statements = { { 2, 0 }, { 0, 2 } };
+	EXPECT_EQ(1, solution.maximumGood(statements));
+}
+
+TEST(Leetcode, 211_Design_Add_and_Search_Words_Data_Structure)
+{
+	WordDictionary wordDictionary;
+	wordDictionary.addWord("bad");
+	wordDictionary.addWord("dad");
+	wordDictionary.addWord("mad");
+	EXPECT_FALSE(wordDictionary.search("pad")); // return False
+	EXPECT_TRUE(wordDictionary.search("bad")); // return True
+	EXPECT_TRUE(wordDictionary.search(".ad")); // return True
+	EXPECT_TRUE(wordDictionary.search("b..")); // return True
 }
 
 #if 0

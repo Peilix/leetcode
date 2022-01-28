@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+
 class WordFilter {
     public:
 	WordFilter(std::vector<std::string> &words)
@@ -224,4 +225,65 @@ class RandomizedSet {
  * bool param_1 = obj->insert(val);
  * bool param_2 = obj->remove(val);
  * int param_3 = obj->getRandom();
+ */
+
+class WordDictionary {
+	struct TrieNode {
+		std::map<char, TrieNode *> children;
+		bool is_end = false;
+	};
+	TrieNode *root;
+
+    public:
+	/** Initialize your data structure here. */
+	WordDictionary()
+	{
+		root = new TrieNode();
+	}
+
+	/** Adds a word into the data structure. */
+	void addWord(std::string word)
+	{
+		TrieNode *curr = root;
+		for (auto letter : word) {
+			if (curr->children.find(letter) ==
+			    curr->children.end()) {
+				curr->children[letter] = new TrieNode();
+			}
+			curr = curr->children[letter];
+		}
+		curr->is_end = true;
+	}
+
+	/** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
+	bool search(std::string word)
+	{
+		return searchRecursive(root, word, 0);
+	}
+
+    private:
+	bool searchRecursive(TrieNode *curr, std::string &word, size_t index)
+	{
+		if (index == word.size())
+			return curr->is_end;
+		char letter = word[index];
+		if (letter == '.') {
+			for (const auto &e : curr->children)
+				if (searchRecursive(e.second, word, index + 1))
+					return true;
+		} else {
+			if (curr->children.find(letter) == curr->children.end())
+				return false;
+			return searchRecursive(curr->children[letter], word,
+					       index + 1);
+		}
+		return false;
+	}
+};
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary* obj = new WordDictionary();
+ * obj->addWord(word);
+ * bool param_2 = obj->search(word);
  */

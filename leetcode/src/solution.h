@@ -44,4 +44,18 @@ class Solution {
 	int findMin(std::vector<int> &nums);
 	std::vector<int> constructRectangle(int area);
 	int countNodes(TreeNode *root);
+	int minimumMoves(std::vector<int> &arr);
+	int uniquePathsIII(std::vector<std::vector<int> > &grid);
+	int firstMissingPositive(std::vector<int> &nums);
+	std::vector<std::vector<int> >
+	allPathsSourceTarget(std::vector<std::vector<int> > &graph);
+	std::vector<std::vector<std::string> >
+	accountsMerge(std::vector<std::vector<std::string> > &accounts);
+	bool canReach(std::vector<int> &arr, int start);
+	int nthMagicalNumber(int n, int a, int b);
+	std::vector<int>
+	findOrder(int numCourses,
+		  std::vector<std::vector<int> > &prerequisites);
+	bool canReach(std::string s, int minJump, int maxJump);
+	int maximumGood(std::vector<std::vector<int> > &statements);
 };

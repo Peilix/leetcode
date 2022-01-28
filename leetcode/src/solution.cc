@@ -45,25 +45,39 @@ int Solution::minCostClimbingStairs(std::vector<int> &cost)
 				 dp[i - 2] + cost[i - 2]);
 	return dp.back();
 }
-// TODO: Optimization
+
 int Solution::maxLength(std::vector<std::string> &arr)
 {
+	std::vector<int> masks(arr.size(), 0);
+	for (size_t i = 0; i < arr.size(); i++) {
+		auto &mask = masks[i];
+		for (auto chr : arr[i]) {
+			if ((mask & (1 << (chr - 'a'))) != 0) {
+				mask = 0;
+				break;
+			}
+			mask |= (1 << (chr - 'a'));
+		}
+	}
+
 	int bitmask = 0;
 	int bitmask_upper_bound = 1 << arr.size();
 	size_t ret = 0;
 	for (; bitmask < bitmask_upper_bound; bitmask++) {
-		std::set<char> set;
 		size_t total_length = 0;
+		int total_mask = 0;
 		for (int i = 0; i < arr.size(); i++) {
 			if ((bitmask & (1 << i)) != 0) {
 				total_length += arr[i].length();
-				if (26 < total_length)
+				if (masks[i] == 0 || 26 < total_length) {
 					break;
-				for (auto ch : arr[i])
-					set.insert(ch);
-				if (set.size() < total_length)
+				}
+				if (total_mask + masks[i] !=
+				    (total_mask | masks[i])) {
 					break;
-				ret = std::max(ret, set.size());
+				}
+				total_mask |= masks[i];
+				ret = std::max(ret, total_length);
 			}
 		}
 	}
@@ -155,28 +169,41 @@ int Solution::shortestPath(std::vector<std::vector<int> > &grid, int k)
 	if (m + n - 1 < k)
 		return m + n - 2;
 	int ret = m * n + 1;
-	auto dfs = [&](auto f, int i = 0, int j = 0, int steps = 0,
-		       int obstacles = 0) {
-		if (i < 0 || i == m || j < 0 || j == n)
-			return;
-		if (grid[i][j] == 1)
-			obstacles++;
-		if (k < obstacles)
-			return;
-		if (i == m - 1 && j == n - 1) {
-			ret = std::min(ret, steps);
-			return;
-		}
-		if (ret <= steps)
-			return;
 
-		f(f, i + 1, j, steps + 1, obstacles);
-		f(f, i, j + 1, steps + 1, obstacles);
-		f(f, i, j - 1, steps + 1, obstacles);
-		f(f, i - 1, j, steps + 1, obstacles);
+	struct Step {
+		int x;
+		int y;
+		int r;
+		int s;
 	};
-	dfs(dfs);
-	return ret == m * n + 1 ? error_code : ret;
+	std::queue<Step> q;
+	q.push({ 0, 0, k, 0 });
+	std::vector<std::vector<std::vector<bool> > > visited(
+		grid.size(),
+		std::vector<std::vector<bool> >(
+			grid.back().size(), std::vector<bool>(k + 1, false)));
+	std::vector<std::pair<int, int> > moves{
+		{ -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 }
+	};
+	visited[0][0][grid[0][0]] = true;
+	while (!q.empty()) {
+		auto pace = q.front();
+		q.pop();
+		if (pace.x == m - 1 && pace.y == n - 1) {
+			return pace.s;
+		}
+		for (const auto &move : moves) {
+			Step step{ pace.x + move.first, pace.y + move.second,
+				   pace.r - grid[pace.x][pace.y], pace.s + 1 };
+			if (0 <= step.x && step.x < m && 0 <= step.y &&
+			    step.y < n && 0 <= step.r &&
+			    !visited[step.x][step.y][step.r]) {
+				q.push(step);
+				visited[step.x][step.y][step.r] = true;
+			}
+		}
+	}
+	return error_code;
 }
 
 /*
@@ -713,4 +740,185 @@ int Solution::countNodes(TreeNode *root)
 		}
 	}
 	return left;
+}
+
+int Solution::minimumMoves(std::vector<int> &arr)
+{
+	return 0;
+}
+
+int Solution::uniquePathsIII(std::vector<std::vector<int> > &grid)
+{
+	return 0;
+}
+
+int Solution::firstMissingPositive(std::vector<int> &nums)
+{
+	int length = static_cast<int>(nums.size());
+	nums.push_back(nums.back()); // dummy num
+	for (int i = 0; i < length; i++) {
+		if (nums[i] <= 0 || length + 1 <= nums[i] ||
+		    nums[i] == nums[nums[i]]) {
+			continue;
+		}
+		if (nums[i] <= i) {
+			nums[nums[i]] = nums[i];
+		} else {
+			std::swap(nums[i], nums[nums[i]]);
+			--i;
+		}
+	}
+	for (int i = 1; i < length + 1; ++i) {
+		if (nums[i] != i) {
+			return i;
+		}
+	}
+	return length + 1;
+}
+
+std::vector<std::vector<int> >
+Solution::allPathsSourceTarget(std::vector<std::vector<int> > &graph)
+{
+	std::vector<std::vector<int> > ret;
+	auto dfs = [&](auto &&dfs, int node, int target,
+		       std::vector<int> &path) -> void {
+		if (node == target) {
+			ret.emplace_back(path);
+		}
+		for (auto next : graph[node]) {
+			path.push_back(next);
+			dfs(dfs, next, target, path);
+			path.pop_back();
+		}
+	};
+	std::vector<int> path{ 0 };
+	path.reserve(graph.size());
+	dfs(dfs, 0, static_cast<int>(graph.size() - 1), path);
+	return ret;
+}
+
+std::vector<std::vector<std::string> >
+Solution::accountsMerge(std::vector<std::vector<std::string> > &accounts)
+{
+	return std::vector<std::vector<std::string> >();
+}
+
+bool Solution::canReach(std::vector<int> &arr, int start)
+{
+	if (arr[start] == 0) {
+		return true;
+	}
+	std::vector<bool> can_reach(arr.size(), false);
+	std::vector<bool> visited(arr.size(), false);
+	for (size_t i = 0; i < arr.size(); ++i) {
+		if (arr[i] == 0) {
+			can_reach[i] = true;
+			visited[i] = true;
+		}
+	}
+	auto dfs = [&](auto &&self, int index) -> bool {
+		if (visited[index]) {
+			return can_reach[index];
+		}
+		visited[index] = true;
+		bool ret = false;
+		if (0 <= index - arr[index]) {
+			ret |= self(self, index - arr[index]);
+		}
+		if (index + arr[index] < arr.size()) {
+			ret |= self(self, index + arr[index]);
+		}
+		return ret;
+	};
+	return dfs(dfs, start);
+}
+
+int Solution::nthMagicalNumber(int n, int a, int b)
+{
+	long lcm_a_b = std::lcm(a, b);
+	long l = 1;
+	long r = LONG_MAX;
+	while (l < r) {
+		auto m = l + (r - l) / 2;
+		auto count = m / a + m / b - m / lcm_a_b;
+		if (count < n)
+			l = m + 1;
+		else
+			r = m;
+	}
+	int modulo = static_cast<int>(1e9) + 7;
+	return l % modulo;
+}
+
+std::vector<int>
+Solution::findOrder(int numCourses,
+		    std::vector<std::vector<int> > &prerequisites)
+{
+	std::vector<int> ret;
+	std::vector<int> in_degree(numCourses);
+	std::unordered_map<int, std::vector<int> > adjacent;
+
+	for (const auto &prerequisite : prerequisites) {
+		adjacent[prerequisite[1]].push_back(prerequisite[0]);
+		++in_degree[prerequisite[0]];
+	}
+
+	std::queue<int> q;
+	for (int i = 0; i < numCourses; i++) {
+		if (in_degree[i] == 0) {
+			q.push(i);
+		}
+	}
+
+	while (!q.empty()) {
+		auto node = q.front();
+		ret.push_back(node);
+		q.pop();
+
+		if (adjacent.contains(node)) {
+			for (auto neighbor : adjacent[node]) {
+				--in_degree[neighbor];
+
+				if (in_degree[neighbor] == 0) {
+					q.push(neighbor);
+				}
+			}
+		}
+	}
+	if (ret.size() < numCourses) {
+		return std::vector<int>();
+	}
+	return ret;
+}
+
+bool Solution::canReach(std::string s, int minJump, int maxJump)
+{
+	assert(!s.empty());
+	assert(minJump <= maxJump);
+	if (s.back() == '1') {
+		return false;
+	}
+
+	s[0] = '2';
+	int covered = 0;
+	int len = static_cast<int>(s.length());
+	for (int i = 0; i < s.length(); i++) {
+		if (s[i] == '2') {
+			for (int j = std::max(i + minJump, covered);
+			     j < std::min(i + maxJump + 1, len); j++) {
+				if (s[j] == '0')
+					s[j] = '2';
+			}
+			covered = i + maxJump;
+			if (s.back() == '2') {
+				return true;
+			}
+		}
+	}
+	return s.back() == '2';
+}
+
+int Solution::maximumGood(std::vector<std::vector<int> > &statements)
+{
+	return 0;
 }
