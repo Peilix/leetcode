@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <ranges>
 #include <queue>
+#include <stack>
 #include <unordered_map>
 
 int Solution::fib(int n)
@@ -127,13 +128,15 @@ int Solution::deleteAndEarn(std::vector<int> &nums)
 
 std::string Solution::breakPalindrome(std::string palindrome)
 {
-	if (palindrome.length() < 2)
+	if (palindrome.length() < 2) {
 		return std::string();
-	for (size_t i = 0; i < palindrome.length() / 2; i++)
+	}
+	for (size_t i = 0; i < palindrome.length() / 2; i++) {
 		if (palindrome[i] != 'a') {
 			palindrome[i] = 'a';
 			return palindrome;
 		}
+	}
 	palindrome.back() = 'b';
 	return palindrome;
 }
@@ -483,7 +486,7 @@ std::vector<double> Solution::medianSlidingWindow(std::vector<int> &nums, int k)
 		double median()
 		{
 			return (k_ & 1) == 1 ?
-					     static_cast<double>(max_heap_.top()) :
+				       static_cast<double>(max_heap_.top()) :
 					     max_heap_.top() / 2.0 +
 					       min_heap_.top() / 2.0;
 		}
@@ -921,4 +924,252 @@ bool Solution::canReach(std::string s, int minJump, int maxJump)
 int Solution::maximumGood(std::vector<std::vector<int> > &statements)
 {
 	return 0;
+}
+
+int Solution::findRadius(std::vector<int> &houses, std::vector<int> &heaters)
+{
+	return 0;
+}
+
+int Solution::largestRectangleArea(std::vector<int> &heights)
+{
+	return 0;
+}
+
+int Solution::widthOfBinaryTree(TreeNode *root)
+{
+	if (root == nullptr) {
+		return 0;
+	}
+
+	size_t ret = 1;
+	std::queue<std::pair<TreeNode *, size_t> > queue;
+	queue.push({ root, 0 });
+
+	while (!queue.empty()) {
+		auto count = queue.size();
+		size_t left = SIZE_MAX;
+		size_t right = 0;
+		while (0 != count--) {
+			root = queue.front().first;
+			auto index = queue.front().second;
+			left = std::min(left, index);
+			right = std::max(right, index);
+			queue.pop();
+			if (root->left) {
+				queue.push({ root->left, index * 2 + 1 });
+			}
+			if (root->right) {
+				queue.push({ root->right, index * 2 + 2 });
+			}
+		}
+		if (left != SIZE_MAX) {
+			ret = std::max(right - left + 1, ret);
+		}
+	}
+	return static_cast<int>(ret);
+}
+
+std::vector<std::string> Solution::summaryRanges(std::vector<int> &nums)
+{
+	std::vector<std::string> ret;
+	if (nums.empty()) {
+		return ret;
+	}
+	std::string tmp;
+	for (size_t i = 0; i + 1 < nums.size(); i++) {
+		if (tmp.empty()) {
+			tmp = std::to_string(nums[i]);
+		}
+		if (nums[i + 1] == nums[i] + 1) {
+			continue;
+		} else if (nums[i] != std::stoi(tmp)) {
+			tmp.append("->");
+			tmp.append(std::to_string(nums[i]));
+		}
+		ret.emplace_back(tmp);
+		tmp.clear();
+	}
+	if (tmp.empty()) {
+		tmp = std::to_string(nums.back());
+	} else {
+		tmp.append("->");
+		tmp.append(std::to_string(nums.back()));
+	}
+	ret.emplace_back(tmp);
+	return ret;
+}
+
+int Solution::getKth(int lo, int hi, int k)
+{
+	std::unordered_map<int, int> hash_map;
+	auto calculate_power = [&](auto &&self, int x) -> int {
+		if (x == 1) {
+			return 0;
+		}
+		if (hash_map.find(x) != hash_map.end()) {
+			return hash_map[x];
+		}
+		int y = x;
+		if ((x & 0x1) == 0) {
+			x >>= 1;
+		} else {
+			x = 3 * x + 1;
+		}
+		hash_map[y] = 1 + self(self, x);
+		return hash_map[y];
+	};
+	std::priority_queue<std::pair<int, int> > heap;
+	for (auto i = lo; i <= hi; i++) {
+		heap.push({ calculate_power(calculate_power, i), i });
+		if (k < heap.size()) {
+			heap.pop();
+		}
+	}
+	return heap.top().second;
+}
+
+std::string Solution::minRemoveToMakeValid(std::string s)
+{
+	std::stack<char> stk;
+	std::string ret;
+	for (auto c : s) {
+		if (c == '(') {
+			stk.push('(');
+			ret.push_back(c);
+		} else if (c == ')') {
+			if (!stk.empty()) {
+				ret.push_back(c);
+				stk.pop();
+			}
+		} else {
+			ret.push_back(c);
+		}
+	}
+	if (!stk.empty()) {
+		if (ret.size() == stk.size()) {
+			return "";
+		}
+		size_t j = 0;
+		size_t i = ret.size();
+		for (; 0 < --i && j < stk.size();) {
+			if (ret[i] == '(') {
+				j++;
+			}
+		}
+		std::string tmp;
+		for (size_t k = 0; k < ret.size(); k++) {
+			if (k <= i || ret[k] != '(') {
+				tmp.push_back(ret[k]);
+			}
+		}
+		ret = std::move(tmp);
+	}
+
+	return ret;
+}
+
+int Solution::scoreOfParentheses(std::string s)
+{
+	return 0;
+}
+
+int Solution::minDominoRotations(std::vector<int> &tops,
+				 std::vector<int> &bottoms)
+{
+	return 0;
+}
+
+std::vector<int> Solution::busiestServers(int k, std::vector<int> &arrival,
+					  std::vector<int> &load)
+{
+	std::vector<int> count(k, 0);
+	std::set<int> free_set;
+	for (int i = 0; i < k; i++) {
+		free_set.insert(i);
+	}
+	std::priority_queue<std::pair<int, int>,
+			    std::vector<std::pair<int, int> >,
+			    std::greater<std::pair<int, int> > >
+		busy_heap; // {finish_time, index}
+	for (size_t i = 0; i < arrival.size(); i++) {
+		while (!busy_heap.empty() &&
+		       busy_heap.top().first <= arrival[i]) {
+			free_set.insert(busy_heap.top().second);
+			busy_heap.pop();
+		}
+		if (free_set.empty()) {
+			continue;
+		} else {
+			auto it = free_set.lower_bound(i % k);
+			if (it == free_set.end()) {
+				it = free_set.begin();
+			}
+			auto index = *it;
+			free_set.erase(index);
+			busy_heap.push({ arrival[i] + load[i], index });
+			count[index]++;
+		}
+	}
+	std::map<int, std::vector<int> > map;
+	for (int i = 0; i < k; i++) {
+		map[count[i]].push_back(i);
+	}
+	return map.rbegin()->second;
+}
+
+bool Solution::hasAllCodes(std::string s, int k)
+{
+	int need = 1 << k;
+	std::vector<bool> got(need, false);
+	int all_one = need - 1;
+	int hash_val = 0;
+
+	for (size_t i = 0; i < s.length(); i++) {
+		// calculate hash for  s.substr(i - k + 1, i + 1)
+		hash_val = ((hash_val << 1) & all_one) | (s[i] - '0');
+		// hash only avalable when i - k + 1 > 0
+		if (k - 1 <= i && !got[hash_val]) {
+			got[hash_val] = true;
+			need--;
+			if (need == 0) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+std::vector<int>
+Solution::countRectangles(std::vector<std::vector<int> > &rectangles,
+			  std::vector<std::vector<int> > &points)
+{
+	return std::vector<int>();
+}
+
+int Solution::consecutiveNumbersSum(int n)
+{
+	int ret = 1;
+	int bound = 2 * n;
+
+	auto is_k_consecutive = [](int n, int k) {
+		if (k % 2 == 1) {
+			return n % k == 0;
+		} else {
+			return n % k != 0 && 2 * n % k == 0;
+		}
+	};
+	for (int i = 2; i * (i + 1) <= bound; i++) {
+		if (is_k_consecutive(n, i)) {
+			ret++;
+		}
+	}
+	return ret;
+}
+
+std::vector<int>
+Solution::fullBloomFlowers(std::vector<std::vector<int> > &flowers,
+			   std::vector<int> &persons)
+{
+	return std::vector<int>();
 }

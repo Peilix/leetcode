@@ -58,4 +58,22 @@ class Solution {
 		  std::vector<std::vector<int> > &prerequisites);
 	bool canReach(std::string s, int minJump, int maxJump);
 	int maximumGood(std::vector<std::vector<int> > &statements);
+	int findRadius(std::vector<int> &houses, std::vector<int> &heaters);
+	int largestRectangleArea(std::vector<int> &heights);
+	int widthOfBinaryTree(TreeNode *root);
+	std::vector<std::string> summaryRanges(std::vector<int> &nums);
+	int getKth(int lo, int hi, int k);
+	std::string minRemoveToMakeValid(std::string s);
+	int scoreOfParentheses(std::string s);
+	int minDominoRotations(std::vector<int> &tops,
+			       std::vector<int> &bottoms);
+	std::vector<int> busiestServers(int k, std::vector<int> &arrival,
+					std::vector<int> &load);
+	bool hasAllCodes(std::string s, int k);
+	std::vector<int>
+	countRectangles(std::vector<std::vector<int> > &rectangles,
+			std::vector<std::vector<int> > &points);
+	int consecutiveNumbersSum(int n);
+	std::vector<int> fullBloomFlowers(std::vector<std::vector<int> > &flowers,
+				     std::vector<int> &persons);
 };
