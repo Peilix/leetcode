@@ -286,6 +286,7 @@ class WordDictionary {
  * WordDictionary* obj = new WordDictionary();
  * obj->addWord(word);
  * bool param_2 = obj->search(word);
+<<<<<<< HEAD
  */
 
 class TaskManager {
@@ -449,4 +450,6 @@ class LockingTree {
  * bool param_1 = obj->lock(num,user);
  * bool param_2 = obj->unlock(num,user);
  * bool param_3 = obj->upgrade(num,user);
+=======
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
  */

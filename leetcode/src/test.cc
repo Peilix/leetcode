@@ -1467,11 +1467,16 @@ TEST(Leetcode, 2251_Number_of_Flowers_in_Full_Bloom)
 	};
 	std::vector<int> persons{ 2, 3, 7, 11 };
 	std::vector<int> output{ 1, 2, 2, 2 };
+<<<<<<< HEAD
 	EXPECT_EQ(output, solution.fullBloomFlowers(flowers, persons));
+=======
+	EXPECT_EQ(output, solution.fullBloomFlowers(flowers,persons));
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
 
 	flowers = { { 1, 10 }, { 3, 3 } }, persons = { 3, 3, 2 },
 	output = { 2, 2, 1 };
 	EXPECT_EQ(output, solution.fullBloomFlowers(flowers, persons));
+<<<<<<< HEAD
 }
 
 TEST(Leetcode, 3411_maximum_subarray_with_equal_products)
@@ -1577,3 +1582,6 @@ TEST(Leetcode, 1358_Number_of_Substrings_Containing_All_Three_Characters){
 	s = "abc";
 	EXPECT_EQ(1, solution.numberOfSubstrings(s));
 }
+=======
+}
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7

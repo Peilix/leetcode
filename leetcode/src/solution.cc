@@ -10,7 +10,10 @@
 #include <queue>
 #include <stack>
 #include <unordered_map>
+<<<<<<< HEAD
 #include <functional>
+=======
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
 
 int Solution::fib(int n)
 {
@@ -447,7 +450,11 @@ std::vector<double> Solution::medianSlidingWindow(std::vector<int> &nums, int k)
 {
 	class DualHeap {
 	    public:
+<<<<<<< HEAD
 		DualHeap(int k) : k_(k) {};
+=======
+		DualHeap(int k) : k_(k){};
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
 		void insert(int num)
 		{
 			if (max_heap_.empty() || num <= max_heap_.top()) {
@@ -488,7 +495,11 @@ std::vector<double> Solution::medianSlidingWindow(std::vector<int> &nums, int k)
 		{
 			return (k_ & 1) == 1 ?
 				       static_cast<double>(max_heap_.top()) :
+<<<<<<< HEAD
 				       max_heap_.top() / 2.0 +
+=======
+					     max_heap_.top() / 2.0 +
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
 					       min_heap_.top() / 2.0;
 		}
 
@@ -619,7 +630,11 @@ double Solution::findMedianSortedArrays(std::vector<int> &nums1,
 	assert(0 < m + n);
 	if (m == 0)
 		return n % 2 == 0 ? (nums2[n / 2 - 1] + nums2[n / 2]) / 2.0 :
+<<<<<<< HEAD
 				    nums2[n / 2];
+=======
+					  nums2[n / 2];
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
 
 	std::pair<int, int> medians;
 	size_t left = 0;
@@ -652,7 +667,11 @@ double Solution::findMedianSortedArrays(std::vector<int> &nums1,
 	medians.first = std::max(nums1_before_i, nums2_before_j);
 	medians.second = std::min(nums1_i, nums2_j);
 	return (m + n) % 2 == 0 ? (medians.first + medians.second) / 2.0 :
+<<<<<<< HEAD
 				  medians.first;
+=======
+					medians.first;
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
 }
 
 std::string Solution::frequencySort(std::string s)
@@ -1174,6 +1193,7 @@ Solution::fullBloomFlowers(std::vector<std::vector<int> > &flowers,
 {
 	return std::vector<int>();
 }
+<<<<<<< HEAD
 
 int Solution::maxLength(std::vector<int> &nums)
 {
@@ -1322,3 +1342,5 @@ int Solution::numberOfSubstrings(std::string s)
 	}
 	return ret;
 }
+=======
+>>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
