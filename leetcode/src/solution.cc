@@ -248,8 +248,9 @@ int Solution::maxSubarraySumCircular(std::vector<int> &nums)
 	}
 	ret = sum - ret;
 
-	if (ret == 0) // empty subarray
+	if (ret == 0) {
 		ret = nums[0];
+	}
 	for (auto it = nums.begin() + 1; it != nums.end(); it++) {
 		max_sum = max_sum < 0 ? *it : max_sum + *it;
 		ret = ret < max_sum ? max_sum : ret;
@@ -260,22 +261,67 @@ int Solution::maxSubarraySumCircular(std::vector<int> &nums)
 
 int Solution::maxProduct(std::vector<int> &nums)
 {
-	int ret = 0;
-	//auto const ints = { 0, 1, 2, 3, 4, 5 };
-	//auto even = [](int i) { return 0 == i % 2; };
-	//auto square = [](int i) { return i * i; };
-	//for (int i : ints | std::ranges::views::filter(even) |
-	//		     std::ranges::views::transform(square)) {
-	//	//std::cout << i << ' ';
-	//	ret = i;
-	//}
-	return ret;
+	int max_product = std::numeric_limits<int>::min();
+	std::array<int, 2> product { 0 };
+	for (size_t i = 0; i < nums.size(); i++) {
+		if (nums[i] == 0)
+			product[0] = 0;
+		else if (product[0] == 0)
+			product[0] = nums[i];
+		else
+			product[0] *= nums[i];
+
+		size_t j = nums.size() - i - 1;
+		if (nums[j] == 0)
+			product[1] = 0;
+		else if (product[1] == 0)
+			product[1] = nums[j];
+		else
+			product[1] *= nums[j];
+
+		max_product = std::max(max_product, product[0]);
+		max_product = std::max(max_product, product[1]);
+	}
+	return max_product;
 }
 
 int Solution::getMaxLen(std::vector<int> &nums)
 {
-	int ret = 0;
-	return ret;
+	auto helper = [](const std::vector<int> &nums) {
+		auto temp = 1;
+		for (auto &num : nums) {
+			temp *= std::abs(num) / num;
+		}
+		if (temp == 1) {
+			return nums.size();
+		}
+		int i = 0;
+		while (0 < nums[i] && 0 < nums[nums.size() - 1 - i]) {
+			i++;
+		}
+		return nums.size() - i - 1;
+	};
+	std::vector<std::vector<int> > withoutzero;
+	std::unordered_map<int, std::vector<int> > umap;
+	size_t start = 0;
+	for (size_t i = 0; i < nums.size(); i++) {
+		if (nums[i] == 0) {
+			withoutzero.push_back(std::vector<int>(
+				nums.begin() + start, nums.begin() + i));
+			start = i + 1;
+		}
+	}
+	withoutzero.push_back(
+		std::vector<int>(nums.begin() + start, nums.end()));
+	size_t ret = 0;
+	for (auto &interval : withoutzero) {
+		auto value = helper(interval);
+		if (ret < value) {
+			ret = value;
+		}
+	}
+
+	return static_cast<int>(ret);
 }
 
 int Solution::numUniqueEmails(std::vector<std::string> &emails)
@@ -616,7 +662,7 @@ double Solution::findMedianSortedArrays(std::vector<int> &nums1,
 	auto m = nums1.size();
 	auto n = nums2.size();
 	auto total_len = m + n;
-	assert(0 < m + n);
+	assert(0 < total_len);
 	if (m == 0)
 		return n % 2 == 0 ? (nums2[n / 2 - 1] + nums2[n / 2]) / 2.0 :
 				    nums2[n / 2];
@@ -631,13 +677,14 @@ double Solution::findMedianSortedArrays(std::vector<int> &nums1,
 		nums1_pivot = left + (right - left) / 2;
 		nums2_pivot = (total_len + 1) / 2 - nums1_pivot;
 
-		int nums1_before_i =
-			(nums1_pivot == 0 ? INT_MIN : nums1[nums1_pivot - 1]);
-		int nums2_j = (nums2_pivot == n ? INT_MAX : nums2[nums2_pivot]);
-		if (nums1_before_i < nums2_j)
+		int nums1_i = (nums1_pivot == m ? INT_MAX : nums1[nums1_pivot]);
+		int nums2_before_j =
+			(nums2_pivot == 0 ? INT_MIN : nums2[nums2_pivot - 1]);
+		if (nums1_i < nums2_before_j) {
 			left = nums1_pivot + 1;
-		else
+		} else {
 			right = nums1_pivot;
+		}
 	}
 
 	nums1_pivot = left;
@@ -661,15 +708,16 @@ std::string Solution::frequencySort(std::string s)
 	std::for_each(s.cbegin(), s.cend(), [&](char c) { count[c]++; });
 	std::map<int, std::vector<char> > occurrence_map;
 	std::for_each(count.cbegin(), count.cend(),
-		      [&](std::pair<int, int> it) {
+		      [&](std::pair<char, int> it) {
 			      occurrence_map[it.second].push_back(it.first);
 		      });
 	std::string ret;
 	std::for_each(
 		occurrence_map.crbegin(), occurrence_map.crend(),
 		[&](std::pair<int, std::vector<char> > it) {
-			for (auto c : it.second)
-				ret.append(std::move(std::string(it.first, c)));
+			      for (auto c : it.second) {
+				      ret.append(it.first, c);
+			      }
 		});
 	return ret;
 }
@@ -929,12 +977,48 @@ int Solution::maximumGood(std::vector<std::vector<int> > &statements)
 
 int Solution::findRadius(std::vector<int> &houses, std::vector<int> &heaters)
 {
-	return 0;
+	std::sort(heaters.begin(), heaters.end());
+	int ret{ 0 };
+	for (auto house : houses) {
+		// binary search
+		size_t left = 0, right = heaters.size();
+		while (left < right) {
+			auto mid = left + ((right - left) >> 1);
+			if (heaters[mid] < house) {
+				left = mid + 1;
+			} else {
+				right = mid;
+			}
+		}
+		if (left == heaters.size()) {
+			ret = std::max(ret, std::abs(heaters.back() - house));
+		} else if (left == 0) {
+			ret = std::max(ret, std::abs(heaters[0] - house));
+		} else {
+			ret = std::max(
+				ret,
+				std::min(std::abs(heaters[left - 1] - house),
+					 std::abs(heaters[left] - house)));
+		}
+	}
+	return ret;
 }
 
 int Solution::largestRectangleArea(std::vector<int> &heights)
 {
-	return 0;
+	std::stack<int> stk;
+	int ret = 0;
+	heights.push_back(0);
+	for (int i = 0; i < heights.size(); i++) {
+		while (not stk.empty() and heights[i] < heights[stk.top()]) {
+			int height = heights[stk.top()];
+			stk.pop();
+			int width = stk.empty() ? i : i - stk.top() - 1;
+			ret = std::max(ret, height * width);
+		}
+		stk.push(i);
+	}
+	return ret;
 }
 
 int Solution::widthOfBinaryTree(TreeNode *root)
@@ -1145,6 +1229,8 @@ std::vector<int>
 Solution::countRectangles(std::vector<std::vector<int> > &rectangles,
 			  std::vector<std::vector<int> > &points)
 {
+	std::sort(rectangles.begin(), rectangles.end());
+	std::sort(points.begin(), points.end());
 	return std::vector<int>();
 }
 
@@ -1172,7 +1258,25 @@ std::vector<int>
 Solution::fullBloomFlowers(std::vector<std::vector<int> > &flowers,
 			   std::vector<int> &persons)
 {
-	return std::vector<int>();
+	std::vector<int> starts, ends;
+	for (const auto &flower : flowers) {
+		starts.push_back(flower[0]);
+		ends.push_back(flower[1]);
+	}
+	std::sort(starts.begin(), starts.end());
+	std::sort(ends.begin(), ends.end());
+
+	std::vector<int> ret;
+	for (auto person : persons) {
+		auto m =
+			std::upper_bound(starts.begin(), starts.end(), person) -
+			starts.begin();
+		auto n =
+			std::upper_bound(ends.begin(), ends.end(), person - 1) -
+			ends.begin();
+		ret.push_back(static_cast<int>(m - n));
+	}
+	return ret;
 }
 
 int Solution::maxLength(std::vector<int> &nums)
@@ -1276,40 +1380,35 @@ Return the total number of of word that contain every vowel('a', 'e', 'i', 'o', 
 */
 long long Solution::countOfSubstrings(std::string word, int k)
 {
-	std::unordered_map<char, int> vowel_count;
-	const std::unordered_set<char> vowels{ 'a', 'e', 'i', 'o', 'u' };
-	int consonants{ 0 };
-	long long ret{ 0 };
-	for (size_t i = 0, j = 0; i < word.size(); i++) {
-		if (consonants <= k and vowel_count.size() <= vowels.size()) {
+	auto at_least_K_consonants = [](const std::string& word, int k) -> long long
+	{
+		std::unordered_map<char, int> vowel_count;
+		std::unordered_set<char> vowels{ 'a', 'e', 'i', 'o', 'u' };
+		int consonants{ 0 };
+		long long ret{ 0 };
+		for (size_t i = 0, j = 0; i < word.length(); i++) {
 			if (vowels.contains(word[i])) {
 				vowel_count[word[i]]++;
-				i++;
-			} else if (consonants < k) {
-				consonants++;
-			} else if (vowel_count.size() < vowels.size()) {
-				while (not vowels.contains(word[j])) {
-					j++;
-				}
-				break;
-			}
-		}
-		while (j < i and consonants == k and
-		       vowel_count.size() == vowels.size()) {
-			ret++;
-			if (vowels.contains(word[j])) {
-				vowel_count[word[j]]--;
-				if (vowel_count[word[j]] == 0) {
-					vowel_count.erase(word[j]);
-				}
 			} else {
-				consonants--;
+				consonants++;
 			}
-			j++;
+			while (k <= consonants and
+			       vowel_count.size() == vowels.size()) {
+				ret += word.length() - i;
+				if (vowels.contains(word[j])) {
+					vowel_count[word[j]]--;
+					if (vowel_count[word[j]] == 0) {
+						vowel_count.erase(word[j]);
+					}
+				} else {
+					consonants--;
+				}
+				j++;
+			}
 		}
-	}
-
-return ret;
+		return ret;
+	};
+	return at_least_K_consonants(word, k) - at_least_K_consonants(word, k + 1);
 }
 
 int Solution::numberOfSubstrings(std::string s)

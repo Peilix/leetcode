@@ -291,7 +291,7 @@ TEST(Leetcode, 918_Maximum_Sum_Circular_Subarray)
 	nums = { -2, -3, -1 };
 	EXPECT_EQ(-1, solution.maxSubarraySumCircular(nums));
 	nums = { -10, -7, 9, -7, 6, 9, -9, -4, -8, -5 };
-	EXPECT_EQ(-1, solution.maxSubarraySumCircular(nums));
+	EXPECT_EQ(17, solution.maxSubarraySumCircular(nums));
 }
 
 TEST(Leetcode, 152_Maximum_Product_Subarray)
@@ -1051,7 +1051,13 @@ TEST(Leetcode, 355_Design_Twitter)
 TEST(Leetcode, 451_Sort_Characters_By_Frequency)
 {
 	std::string s = "tree";
-	EXPECT_EQ("eert", solution.frequencySort(s));
+	//EXPECT_EQ("eert", solution.frequencySort(s));
+	std::unordered_set<std::string> expected_outputs = { "eert", "eetr" };
+	//ASSERT_T
+	//EXPECT_THAT((std::array{ "eert", "eetr" }), solution.frequencySort(s));
+	ASSERT_TRUE(std::find(expected_outputs.begin(), expected_outputs.end(),
+			      solution.frequencySort(s)) !=
+		expected_outputs.end());
 }
 
 TEST(Leetcode, 154_Find_Minimum_in_Rotated_Sorted_Array_II)
@@ -1321,7 +1327,9 @@ TEST(Leetcode, 84_Largest_Rectangle_in_Histogram)
 	std::vector<int> heights{ 2, 1, 5, 6, 2, 3 };
 	EXPECT_EQ(10, solution.largestRectangleArea(heights));
 	heights = { 2, 4 };
-	EXPECT_EQ(10, solution.largestRectangleArea(heights));
+	EXPECT_EQ(4, solution.largestRectangleArea(heights));
+	heights = { 4, 2, 0, 3, 2, 5 };
+	EXPECT_EQ(6, solution.largestRectangleArea(heights));
 }
 
 TEST(Leetcode, 662_Maximum_Width_of_Binary_Tree)
@@ -1568,6 +1576,8 @@ TEST(Leetcode, 3306_count_of_substrings_containing_every_vowel_and_k_consonants_
 	EXPECT_EQ(1, solution.countOfSubstrings(s, 0));
 	s = "ieaouqqieaouqq";
 	EXPECT_EQ(3, solution.countOfSubstrings(s, 1));
+	s = "iqeaouqi";
+	EXPECT_EQ(3, solution.countOfSubstrings(s, 2));
 }
 
 TEST(Leetcode, 1358_Number_of_Substrings_Containing_All_Three_Characters){
