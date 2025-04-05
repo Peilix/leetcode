@@ -74,7 +74,6 @@ class Solution {
 	countRectangles(std::vector<std::vector<int> > &rectangles,
 			std::vector<std::vector<int> > &points);
 	int consecutiveNumbersSum(int n);
-<<<<<<< HEAD
 	std::vector<int>
 	fullBloomFlowers(std::vector<std::vector<int> > &flowers,
 			 std::vector<int> &persons);
@@ -83,8 +82,4 @@ class Solution {
 	int numTilePossibilities(std::string tiles);
 	long long countOfSubstrings(std::string word, int k);
 	int numberOfSubstrings(std::string s);
-=======
-	std::vector<int> fullBloomFlowers(std::vector<std::vector<int> > &flowers,
-				     std::vector<int> &persons);
->>>>>>> 814e0a7adb23eebc5e1c35397dc0cc60509111e7
 };
