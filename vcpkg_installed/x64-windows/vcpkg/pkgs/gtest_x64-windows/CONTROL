@@ -1,0 +1,7 @@
+Package: gtest
+Version: 1.15.2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 211c3a5f1ac26752c1ca26389777fa918dee9dd6c24694809de5601e64fddd22
+Description: Google Testing and Mocking Framework
