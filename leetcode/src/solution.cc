@@ -42,9 +42,10 @@ int Solution::tribonacci(int n)
 int Solution::minCostClimbingStairs(std::vector<int> &cost)
 {
 	std::vector<int> dp(cost.size() + 1, 0);
-	for (int i = 2; i < dp.size(); i++)
+	for (int i = 2; i < dp.size(); i++) {
 		dp[i] = std::min(dp[i - 1] + cost[i - 1],
 				 dp[i - 2] + cost[i - 2]);
+	}
 	return dp.back();
 }
 
@@ -162,17 +163,18 @@ int Solution::jump(std::vector<int> &nums)
 			dp[i + j] = std::min(dp[i] + 1, dp[i + j]);
 	return dp.back();
 }
-// TODO:  BFS or DP (BFS exercise)
+
 int Solution::shortestPath(std::vector<std::vector<int> > &grid, int k)
 {
 	constexpr int error_code = -1;
-	if (grid.empty() || grid.back().empty())
+	if (grid.empty() || grid.back().empty()) {
 		return error_code;
+	}
 	const int m = static_cast<int>(grid.size());
 	const int n = static_cast<int>(grid.back().size());
-	if (m + n - 1 < k)
+	if (m + n - 1 < k) {
 		return m + n - 2;
-	int ret = m * n + 1;
+	}
 
 	struct Step {
 		int x;
@@ -262,7 +264,7 @@ int Solution::maxSubarraySumCircular(std::vector<int> &nums)
 int Solution::maxProduct(std::vector<int> &nums)
 {
 	int max_product = std::numeric_limits<int>::min();
-	std::array<int, 2> product { 0 };
+	std::array<int, 2> product{ 0 };
 	for (size_t i = 0; i < nums.size(); i++) {
 		if (nums[i] == 0)
 			product[0] = 0;
@@ -385,32 +387,71 @@ Solution::updateMatrix(std::vector<std::vector<int> > &mat)
 
 bool Solution::canPartitionKSubsets(std::vector<int> &nums, int k)
 {
-	int sum = std::accumulate(nums.begin(), nums.end(), 0);
-	if (sum % k != 0)
-		return false;
-	int n = sum / k;
-	std::sort(nums.begin(), nums.end());
-	if (n < nums.back())
-		return false;
-	std::vector<bool> mark(nums.size(), false);
-
-	for (size_t i = nums.size(); 0 < i--;) {
-		int left = 0;
-		int right = static_cast<int>(i) - 1;
-		while (left < right) {
-			int mid = left + ((right - left) >> 1);
-			if (nums[mid])
-				//TOOD
-				mid++;
-		}
+	auto sum = std::accumulate(nums.begin(), nums.end(), 0);
+	if (sum % k != 0) {
+		return false; // Cannot partition into k subsets of equal sum
+	}
+	int target = sum / k;
+	std::sort(nums.rbegin(), nums.rend()); // Sort in descending order
+	if (nums[0] > target) {
+		return false; // Largest element exceeds target sum
 	}
 
-	return false;
+	// Define the helper inside the main function as a lambda
+	int bitmask = 0;
+	std::set<std::tuple<int, int> > failed; // To track failed states
+	std::function<bool(int, int, int, int)> partition_helper =
+		[&](int remaining_groups, int bitmask, int current_group_sum,
+		    int target) -> bool {
+		if (current_group_sum == target) { // Start a new group
+			current_group_sum = 0;
+			remaining_groups--;
+		}
+		if (remaining_groups == 0) {
+			return true; // All groups successfully formed
+		}
+		for (int i = 0; i < nums.size(); i++) {
+			if (((bitmask >> i) & 1) == 0 &&
+			    nums[i] + current_group_sum <=
+				    target) { // If element is unused and fits
+				auto state = std::make_tuple(
+					remaining_groups, bitmask ^ (1 << i));
+				if (failed.contains(state)) {
+					continue; // Skip already failed state
+				}
+				if (partition_helper(remaining_groups,
+						     bitmask ^ (1 << i),
+						     current_group_sum +
+							     nums[i],
+						     target)) {
+					return true;
+				} else {
+					failed.insert(state); // Mark as failed
+				}
+			}
+		}
+		return false;
+	};
+
+	// Call the lambda
+	return partition_helper(k, bitmask, 0, target);
 }
 
 int Solution::longestCommonSubsequence(std::string text1, std::string text2)
 {
-	return 0;
+	std::vector<std::vector<int> > dp(
+		text1.length() + 1, std::vector<int>(text2.length() + 1, 0));
+	for (size_t i = 0; i < text1.length(); i++) {
+		for (size_t j = 0; j < text2.length(); j++) {
+			if (text1[i] == text2[j]) {
+				dp[i + 1][j + 1] = dp[i][j] + 1;
+			} else {
+				dp[i + 1][j + 1] =
+					std::max(dp[i][j + 1], dp[i + 1][j]);
+			}
+		}
+	}
+	return dp.back().back();
 }
 
 bool Solution::exist(std::vector<std::vector<char> > &board, std::string word)
@@ -454,39 +495,128 @@ std::vector<std::string>
 Solution::findWords(std::vector<std::vector<char> > &board,
 		    std::vector<std::string> &words)
 {
-	std::vector<std::string> ret;
-
-	std::vector<std::vector<bool> > visited(
-		board.size(), std::vector<bool>(board[0].size(), false));
-	std::vector<std::vector<int> > adjacents = {
-		{ -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 }
+	struct TrieNode {
+		std::array<TrieNode *, 26> children = { nullptr };
+		bool is_leaf = false;
 	};
+
 	class Trie {
 	    public:
-		void insert(std::string){};
+		TrieNode *root;
+
+		Trie() : root(new TrieNode())
+		{
+		}
+
+		void insert(const std::string &word)
+		{
+			TrieNode *node = root;
+			for (char c : word) {
+				int index = c - 'a';
+				if (nullptr == node->children[index]) {
+					node->children[index] = new TrieNode();
+				}
+				node = node->children[index];
+			}
+			node->is_leaf = true;
+		}
+
+		bool search(const std::string &word)
+		{
+			TrieNode *node = root;
+			for (char c : word) {
+				int index = c - 'a';
+				if (nullptr == node->children[index]) {
+					return false;
+				}
+				node = node->children[index];
+			}
+			return node->is_leaf;
+		}
+
+		bool has_prefix(const std::string &word)
+		{
+			TrieNode *node = root;
+			for (char c : word) {
+				int index = c - 'a';
+				if (nullptr == node->children[index]) {
+					return false;
+				}
+				node = node->children[index];
+			}
+			return true;
+		}
+
+		~Trie()
+		{
+			deleteTrie(root);
+		}
+
+	    private:
+		void deleteTrie(TrieNode *node)
+		{
+			for (auto child : node->children) {
+				if (child) {
+					deleteTrie(child);
+				}
+			}
+			delete node;
+		}
 	};
 	Trie trie;
-	for (auto &&word : words) {
-		// Trie insert(word);
+	for (const auto &word : words) {
 		trie.insert(word);
 	}
-	auto backtrace = [&](auto &&f, int row, int column, int index) -> void {
-		if (row < 0 || board.size() <= row || column < 0 ||
-		    board[0].size() <= column || visited[row][column] == true)
-			return;
-		if (true) // not in trie
-			return;
-		// if in trie and is_end
-		//ret.emplace_back();
-		visited[row][column] = true;
-		for (const auto &adjacent : adjacents) {
-			int i = row + adjacent[0];
-			int j = column + adjacent[1];
-			f(f, i, j, index + 1);
-		}
-		visited[row][column] = false;
+
+	std::unordered_set<std::string> available_words;
+	size_t m = board.size(), n = board[0].size();
+	std::array<std::pair<int, int>, 4> directions = {
+		std::make_pair(-1, 0), // Up
+		std::make_pair(0, -1), // Left
+		std::make_pair(0, 1), // Right
+		std::make_pair(1, 0) // Down
 	};
-	return ret;
+
+	std::vector<std::vector<bool> > visited(m, std::vector<bool>(n, false));
+	std::function<void(size_t, size_t, TrieNode *, std::string &)> dfs =
+		[&](size_t i, size_t j, TrieNode *node, std::string &curr) {
+			if (node->is_leaf) {
+				available_words.insert(curr);
+			}
+			for (auto direction : directions) {
+				size_t new_i = i + direction.first,
+				       new_j = j + direction.second;
+				if (new_i < m and new_j < n and
+				    node->children[board[new_i][new_j] - 'a'] !=
+					    nullptr and
+				    not visited[new_i][new_j]) {
+					visited[new_i][new_j] = true;
+					curr.push_back(board[new_i][new_j]);
+					dfs(new_i, new_j,
+					    node->children[board[new_i][new_j] -
+							   'a'],
+					    curr);
+					curr.pop_back();
+					visited[new_i][new_j] = false;
+				}
+			}
+		};
+	std::string curr;
+	for (size_t i = 0; i < m; i++) {
+		for (size_t j = 0; j < n; j++) {
+			visited[i][j] = true;
+			curr.push_back(board[i][j]);
+			if (trie.root->children[board[i][j] - 'a'] != nullptr) {
+				dfs(i, j,
+				    trie.root->children[board[i][j] - 'a'],
+				    curr);
+			}
+			curr.pop_back();
+			visited[i][j] = false;
+		}
+	}
+	return std::vector<std::string>(available_words.begin(),
+					available_words.end());
 }
 
 std::vector<double> Solution::medianSlidingWindow(std::vector<int> &nums, int k)
@@ -535,7 +665,7 @@ std::vector<double> Solution::medianSlidingWindow(std::vector<int> &nums, int k)
 			return (k_ & 1) == 1 ?
 				       static_cast<double>(max_heap_.top()) :
 				       max_heap_.top() / 2.0 +
-					   min_heap_.top() / 2.0;
+					       min_heap_.top() / 2.0;
 		}
 
 	    private:
@@ -601,7 +731,57 @@ std::vector<double> Solution::medianSlidingWindow(std::vector<int> &nums, int k)
 
 int Solution::minimumDifference(std::vector<int> &nums)
 {
-	return 0;
+	auto sum = std::accumulate(nums.begin(), nums.end(), 0);
+	int ret{ std::numeric_limits<int>::max() };
+	auto n = nums.size() >> 1;
+	if (15 < n) {
+		throw std::invalid_argument("Input size exceeds limit!");
+	}
+	std::vector<std::vector<int> > left_partition_sums(n + 1),
+		right_partition_sums(n + 1);
+	for (size_t bitmask = 0; bitmask < (1ull << n); bitmask++) {
+		size_t size = 0;
+		int left_sum{ 0 }, right_sum{ 0 };
+		for (size_t i = 0; i < n; i++) {
+			if (((bitmask >> i) & 1) != 0) {
+				left_sum += nums[i];
+				right_sum += nums[i + n];
+				size++;
+			}
+		}
+		left_partition_sums[size].push_back(left_sum);
+		right_partition_sums[size].push_back(right_sum);
+	}
+	for (auto &&subset : right_partition_sums) {
+		std::sort(subset.begin(), subset.end());
+	}
+	for (size_t i = 0; i <= n; i++) {
+		for (auto left_sum : left_partition_sums[i]) {
+			// binary search
+			size_t left = 0,
+			       right = right_partition_sums[n - i].size();
+			while (left < right) {
+				auto mid = left + (right - left) / 2;
+				if (2 * (right_partition_sums[n - i][mid] +
+					 left_sum) <
+				    sum) {
+					left = mid + 1;
+				} else {
+					right = mid;
+				}
+			}
+			if (left != right_partition_sums[n - i].size()) {
+				ret = std::min(
+					ret,
+					std::abs(
+						sum -
+						2 * (right_partition_sums[n - i]
+									 [left] +
+						     left_sum)));
+			}
+		}
+	}
+	return ret;
 }
 
 std::string Solution::longestDupSubstring(std::string s)
@@ -712,13 +892,12 @@ std::string Solution::frequencySort(std::string s)
 			      occurrence_map[it.second].push_back(it.first);
 		      });
 	std::string ret;
-	std::for_each(
-		occurrence_map.crbegin(), occurrence_map.crend(),
-		[&](std::pair<int, std::vector<char> > it) {
+	std::for_each(occurrence_map.crbegin(), occurrence_map.crend(),
+		      [&](std::pair<int, std::vector<char> > it) {
 			      for (auto c : it.second) {
 				      ret.append(it.first, c);
 			      }
-		});
+		      });
 	return ret;
 }
 
@@ -801,7 +980,49 @@ int Solution::minimumMoves(std::vector<int> &arr)
 
 int Solution::uniquePathsIII(std::vector<std::vector<int> > &grid)
 {
-	return 0;
+	size_t non_obstacle_count{ 0 };
+	std::pair<size_t, size_t> start_pos;
+	for (size_t i = 0; i < grid.size(); i++) {
+		for (size_t j = 0; j < grid[i].size(); j++) {
+			if (grid[i][j] == 0) {
+				non_obstacle_count++;
+			} else if (grid[i][j] == 1) {
+				start_pos = { i, j };
+			}
+		}
+	}
+	std::array<std::pair<int, int>, 4> directions = {
+		std::make_pair(-1, 0), // Up
+		std::make_pair(0, -1), // Left
+		std::make_pair(0, 1), // Right
+		std::make_pair(1, 0) // Down
+	};
+	int ret{ 0 };
+	//backtracking
+	std::function<void(size_t, size_t, size_t)> backtracking =
+		[&](size_t row, size_t column, size_t visited_count) -> void {
+		if (grid[row][column] == 2 and
+		    visited_count == non_obstacle_count + 1) {
+			ret++;
+			return;
+		}
+		if (grid[row][column] != 0 and visited_count != 0) {
+			return;
+		}
+		for (auto direction : directions) {
+			auto next_row = row + direction.first;
+			auto next_column = column + direction.second;
+			if (not(next_row < grid.size() and
+				next_column < grid[0].size())) {
+				continue;
+			}
+			grid[row][column] += 3;
+			backtracking(next_row, next_column, visited_count + 1);
+			grid[row][column] -= 3;
+		}
+	};
+	backtracking(start_pos.first, start_pos.second, 0);
+	return ret;
 }
 
 int Solution::firstMissingPositive(std::vector<int> &nums)
@@ -848,11 +1069,109 @@ Solution::allPathsSourceTarget(std::vector<std::vector<int> > &graph)
 	dfs(dfs, 0, static_cast<int>(graph.size() - 1), path);
 	return ret;
 }
-
 std::vector<std::vector<std::string> >
 Solution::accountsMerge(std::vector<std::vector<std::string> > &accounts)
 {
-	return std::vector<std::vector<std::string> >();
+	class UnionFind {
+	    public:
+		UnionFind(size_t n)
+		{
+			parent_.resize(n);
+			rank_.resize(n, 0);
+			for (int i = 0; i < n; ++i) {
+				parent_[i] =
+					i; // Initially, each element is its own parent
+			}
+		}
+
+		int find(int x)
+		{
+			if (parent_[x] != x) {
+				parent_[x] =
+					find(parent_[x]); // Path compression
+			}
+			return parent_[x];
+		}
+
+		void merge(int x, int y)
+		{
+			int rootX = find(x);
+			int rootY = find(y);
+
+			if (rootX != rootY) {
+				// Union by rank
+				if (rank_[rootX] > rank_[rootY]) {
+					parent_[rootY] = rootX;
+				} else if (rank_[rootX] < rank_[rootY]) {
+					parent_[rootX] = rootY;
+				} else {
+					parent_[rootY] = rootX;
+					rank_[rootX]++;
+				}
+			}
+		}
+
+		void groupBy()
+		{
+			for (int i = 0; i < parent_.size(); ++i) {
+				int root = find(i);
+				trees_[root].push_back(i);
+			}
+		}
+		const std::unordered_map<int, std::vector<int> > &
+		getTrees() const
+		{
+			return trees_;
+		}
+
+	    private:
+		std::vector<int> parent_;
+		std::vector<int> rank_;
+		std::unordered_map<int, std::vector<int> > trees_;
+	};
+	std::vector<std::vector<std::string> > ret;
+	std::unordered_map<std::string, std::set<std::string> > user_email_map;
+	for (const auto &account : accounts) {
+		for (size_t i = 1; i < account.size(); i++) {
+			user_email_map[account[0]].insert(account[i]);
+		}
+	}
+	std::unordered_map<std::string, UnionFind *> user_union_find_map;
+	std::unordered_map<std::string, std::unordered_map<std::string, int> >
+		email_index_map;
+	std::unordered_map<std::string, std::vector<std::string> >
+		user_email_list_map;
+	for (const auto &[user_name, emails] : user_email_map) {
+		user_union_find_map[user_name] = new UnionFind(emails.size());
+		int i = 0;
+		for (auto email : emails) {
+			email_index_map[user_name][email] = i;
+			user_email_list_map[user_name].push_back(email);
+			i++;
+		}
+	}
+	for (const auto &account : accounts) {
+		const auto &user_name = account[0];
+		for (size_t i = 2; i < account.size(); i++) {
+			user_union_find_map[user_name]->merge(
+				email_index_map[user_name][account[1]],
+				email_index_map[user_name][account[i]]);
+		}
+	}
+	for (auto &&[user_name, user_union_find] : user_union_find_map) {
+		user_union_find->groupBy();
+		for (const auto &tree : user_union_find->getTrees()) {
+			std::vector<std::string> current_merged_account;
+			current_merged_account.push_back(user_name);
+			for (auto index : tree.second) {
+				current_merged_account.push_back(
+					user_email_list_map[user_name][index]);
+			}
+			ret.push_back(std::move(current_merged_account));
+		}
+		delete user_union_find;
+	}
+	return ret;
 }
 
 bool Solution::canReach(std::vector<int> &arr, int start)
@@ -972,7 +1291,48 @@ bool Solution::canReach(std::string s, int minJump, int maxJump)
 
 int Solution::maximumGood(std::vector<std::vector<int> > &statements)
 {
-	return 0;
+	auto n = statements.size();
+	int ret = 0;
+
+	auto no_conflicts =
+		[&](unsigned config,
+		    const std::vector<std::vector<int> > &statements) -> bool {
+		for (size_t i = 0; i < n; i++) {
+			if (0 == ((config >> i) & 1)) {
+				continue;
+			}
+			for (int j = 0; j < n; j++) {
+				if (statements[i][j] != 2 &&
+				    statements[i][j] != ((config >> j) & 1)) {
+					return false; // Conflict detected
+				}
+			}
+		}
+		return true; // No conflicts
+	};
+
+	// Backtracking function to check configurations
+	std::function<void(size_t, unsigned)> backtrack = [&](size_t index,
+							   unsigned config) {
+		// Base case: all individuals have been considered
+		if (index == n) {
+			if (no_conflicts(config, statements)) {
+				ret = std::max(ret, std::popcount(config));
+			}
+			return;
+		}
+
+		// Case 1: Assume the current person is "good" (set the `index`-th bit to 1)
+		backtrack(index + 1, config | (1 << index));
+
+		// Case 2: Assume the current person is "bad" (leave the `index`-th bit as 0)
+		backtrack(index + 1, config);
+	};
+
+	// Start backtracking
+	backtrack(0u, 0u);
+
+	return ret;
 }
 
 int Solution::findRadius(std::vector<int> &houses, std::vector<int> &heaters)
@@ -1162,7 +1522,34 @@ int Solution::scoreOfParentheses(std::string s)
 int Solution::minDominoRotations(std::vector<int> &tops,
 				 std::vector<int> &bottoms)
 {
-	return 0;
+	assert(tops.size() == bottoms.size());
+	std::vector<int> candidates = { tops[0], bottoms[0] };
+
+	for (size_t i = 1; i < tops.size(); i++) {
+		candidates.erase(
+			std::remove_if(candidates.begin(), candidates.end(),
+				       [&](int val) {
+					       return val != tops[i] &&
+						      val != bottoms[i];
+				       }),
+			candidates.end());
+		if (candidates.empty()) {
+			return -1;
+		}
+	}
+
+	int rotations_top = 0, rotations_bottom = 0;
+	int candidate = candidates[0];
+	for (size_t i = 0; i < tops.size(); i++) {
+		if (tops[i] != candidate) {
+			rotations_top++;
+		}
+		if (bottoms[i] != candidate) {
+			rotations_bottom++;
+		}
+	}
+
+	return std::min(rotations_top, rotations_bottom);
 }
 
 std::vector<int> Solution::busiestServers(int k, std::vector<int> &arrival,
@@ -1229,9 +1616,33 @@ std::vector<int>
 Solution::countRectangles(std::vector<std::vector<int> > &rectangles,
 			  std::vector<std::vector<int> > &points)
 {
-	std::sort(rectangles.begin(), rectangles.end());
-	std::sort(points.begin(), points.end());
-	return std::vector<int>();
+	std::map<int, std::vector<int> > heights_to_length;
+	for (const auto &rectangle : rectangles) {
+		heights_to_length[rectangle[1]].push_back(rectangle[0]);
+	}
+	for (auto &[k, v] : heights_to_length) {
+		std::sort(v.begin(), v.end());
+	}
+	std::vector<int> ret;
+	for (const auto &point : points) {
+		auto it = heights_to_length.lower_bound(point[1]);
+		int tmp = 0;
+		for (auto jt = it; jt != heights_to_length.end(); jt++) {
+			size_t left = 0, right = jt->second.size();
+			while (left < right) {
+				auto mid = left + (right - left) / 2;
+				if (jt->second.at(mid) < point[0]) {
+					left = mid + 1;
+				} else {
+					right = mid;
+				}
+			}
+			tmp += static_cast<int>(jt->second.size() - left);
+		}
+		ret.push_back(tmp);
+	}
+
+	return ret;
 }
 
 int Solution::consecutiveNumbersSum(int n)
@@ -1281,17 +1692,10 @@ Solution::fullBloomFlowers(std::vector<std::vector<int> > &flowers,
 
 int Solution::maxLength(std::vector<int> &nums)
 {
-	std::array<std::vector<int>, 11> factors = { std::vector<int>{},
-						     {},
-						     { 2 },
-						     { 3 },
-						     { 2 },
-						     { 5 },
-						     { 2, 3 },
-						     { 7 },
-						     { 2 },
-						     { 3 },
-						     { 2, 5 } };
+	std::array<std::vector<int>, 11> factors = {
+		std::vector<int>{}, {},	   { 2 }, { 3 }, { 2 },	  { 5 },
+		{ 2, 3 },	    { 7 }, { 2 }, { 3 }, { 2, 5 }
+	};
 	//std::vector<int> factors[12] = { {},	{},    { 2 },	 { 3 },
 	//				 { 2 }, { 5 }, { 2, 3 }, { 7 },
 	//				 { 2 }, { 3 }, { 2, 5 } };
@@ -1380,8 +1784,8 @@ Return the total number of of word that contain every vowel('a', 'e', 'i', 'o', 
 */
 long long Solution::countOfSubstrings(std::string word, int k)
 {
-	auto at_least_K_consonants = [](const std::string& word, int k) -> long long
-	{
+	auto at_least_K_consonants = [](const std::string &word,
+					int k) -> long long {
 		std::unordered_map<char, int> vowel_count;
 		std::unordered_set<char> vowels{ 'a', 'e', 'i', 'o', 'u' };
 		int consonants{ 0 };
@@ -1408,7 +1812,8 @@ long long Solution::countOfSubstrings(std::string word, int k)
 		}
 		return ret;
 	};
-	return at_least_K_consonants(word, k) - at_least_K_consonants(word, k + 1);
+	return at_least_K_consonants(word, k) -
+	       at_least_K_consonants(word, k + 1);
 }
 
 int Solution::numberOfSubstrings(std::string s)
@@ -1417,7 +1822,36 @@ int Solution::numberOfSubstrings(std::string s)
 	std::array<int, 3> last_pos{ -1, -1, -1 };
 	for (int i = 0; i < s.length(); i++) {
 		last_pos[s[i] - 'a'] = i;
-		ret += 1 + *std::min_element(last_pos.cbegin(), last_pos.cend());
+		ret += 1 +
+		       *std::min_element(last_pos.cbegin(), last_pos.cend());
+	}
+	return ret;
+}
+
+std::vector<int> Solution::largestDivisibleSubset(std::vector<int> &nums)
+{
+	std::sort(nums.begin(), nums.end());
+	std::vector<int> dp(nums.size(), 1);
+	std::vector<int> path(nums.size(), -1);
+	int max_length{ 0 };
+	int last_index{ -1 };
+	for (int i = 0; i < nums.size(); i++) {
+		for (int j = 0; j < i; j++) {
+			if (nums[i] % nums[j] == 0) {
+				if (dp[i] < dp[j] + 1) {
+					dp[i] = dp[j] + 1;
+					path[i] = j;
+				}
+			}
+		}
+		if (max_length < dp[i]) {
+			max_length = dp[i];
+			last_index = i;
+		}
+	}
+	std::vector<int> ret(max_length, 0);
+	for (int i = last_index; i != -1; i = path[i]) {
+		ret[--max_length] = nums[i];
 	}
 	return ret;
 }

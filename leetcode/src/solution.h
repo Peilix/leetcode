@@ -82,4 +82,5 @@ class Solution {
 	int numTilePossibilities(std::string tiles);
 	long long countOfSubstrings(std::string word, int k);
 	int numberOfSubstrings(std::string s);
+	std::vector<int> largestDivisibleSubset(std::vector<int> &nums);
 };

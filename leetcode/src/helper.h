@@ -2,8 +2,20 @@
 
 #include <vector>
 #include <optional>
+#include <algorithm>
 
 #include "tree_node.h"
+
+template <typename T>
+bool unorderedEquals(std::vector<T> lhs, std::vector<T> rhs)
+{
+	if (lhs.size() != rhs.size()) {
+		return false;
+	}
+	std::sort(lhs.begin(), lhs.end());
+	std::sort(rhs.begin(), rhs.end());
+	return lhs == rhs;
+}
 
 class TreeBuilder {
     public:
