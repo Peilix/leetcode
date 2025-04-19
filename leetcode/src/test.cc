@@ -2054,4 +2054,9 @@ TEST(Leetcode, 368_Largest_Divisible_Subset)
 	nums = { 1, 2, 4, 8 };
 	EXPECT_EQ(nums, solution.largestDivisibleSubset(nums));
 }
-
+TEST(Leetcode, 2563_Count_the_Number_of_Fair_Pairs)
+{
+	std::vector<int> nums{ -5, -7, -5, -7, -5 };
+	int lower{ -12 }, upper{ -12 };
+	EXPECT_EQ(6, solution.countFairPairs(nums,lower,upper));
+}

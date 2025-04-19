@@ -1313,7 +1313,7 @@ int Solution::maximumGood(std::vector<std::vector<int> > &statements)
 
 	// Backtracking function to check configurations
 	std::function<void(size_t, unsigned)> backtrack = [&](size_t index,
-							   unsigned config) {
+							      unsigned config) {
 		// Base case: all individuals have been considered
 		if (index == n) {
 			if (no_conflicts(config, statements)) {
@@ -1853,5 +1853,22 @@ std::vector<int> Solution::largestDivisibleSubset(std::vector<int> &nums)
 	for (int i = last_index; i != -1; i = path[i]) {
 		ret[--max_length] = nums[i];
 	}
+	return ret;
+}
+
+long long Solution::countFairPairs(std::vector<int> &nums, int lower, int upper)
+{
+	auto ret{ 0ll };
+	std::sort(nums.begin(), nums.end());
+
+	for (size_t i = 0; i < nums.size(); ++i) {
+		auto lower_bound = std::lower_bound(
+			nums.begin() + i + 1, nums.end(), lower - nums[i]);
+		auto upper_bound = std::lower_bound(lower_bound, nums.end(),
+						    upper + 1 - nums[i]);
+
+		ret += upper_bound - lower_bound;
+	}
+
 	return ret;
 }

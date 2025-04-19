@@ -83,4 +83,5 @@ class Solution {
 	long long countOfSubstrings(std::string word, int k);
 	int numberOfSubstrings(std::string s);
 	std::vector<int> largestDivisibleSubset(std::vector<int> &nums);
+	long long countFairPairs(std::vector<int> &nums, int lower, int upper);
 };
